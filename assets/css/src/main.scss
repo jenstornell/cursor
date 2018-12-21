@@ -1,0 +1,31 @@
+main {
+  display: flex;
+  flex: 1;
+
+  .surface {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+
+    #input-wrap {
+      width: 50%;
+      border-right: 1px solid #ccc;
+    }
+
+    #input {
+      flex: 1;
+      display: flex;
+      width: 100%;
+      box-sizing: border-box;
+
+      border-right: 1px solid #ddd;
+      display: flex;
+      flex-direction: column;
+
+      .text {
+        display: flex;
+        flex: 1;
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+#image {
+  overflow: auto;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+
+  img {
+    max-width: 100%;
+    display: block;
+  }
+}
