@@ -1,0 +1,41 @@
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: #eee;
+  display: flex;
+  overflow: hidden;
+}
+
+main {
+  display: flex;
+  background: #fff;
+  flex: 1;
+  flex-direction: column;
+
+  .split {
+    display: flex;
+    flex: 1;
+
+    .editor,
+    .presentation {
+      flex: 1;
+    }
+
+    .editor {
+      border-right: 1px solid #ccc;
+    }
+  }
+}
+
+[data-pending] .pending {
+  height: 1rem;
+  width: 1rem;
+  background: #ffc107;
+  top: 3.5rem;
+  position: fixed;
+  right: 1rem;
+  border-radius: 100vh;
+}

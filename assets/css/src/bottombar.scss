@@ -1,0 +1,22 @@
+.bottombar {
+  background: #eee;
+  border-top: 1px solid #ccc;
+  font-family: roboto;
+  font-size: .9rem;
+  height: 2.5rem;
+  line-height: 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  padding-right: 1rem;
+  padding-left: 1rem;
+
+  ul {
+    list-style: none;
+    display: flex;
+    margin: 0 -.5rem;
+
+    li {
+      padding: 0 .5rem;
+    }
+  }
+}

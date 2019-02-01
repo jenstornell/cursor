@@ -1,75 +1,78 @@
-var gulp = require('gulp');
-var concat = require('gulp-concat');
-var notify = require('gulp-notify');
-var sass = require('gulp-sass');
-var gutil = require('gulp-util');
-var uglify = require('gulp-uglify');
+let gulp = require("gulp");
+let sass = require("gulp-sass");
+let autoprefixer = require("gulp-autoprefixer");
+let concat = require("gulp-concat");
+let uglify = require('gulp-uglify-es').default;
+let csso = require('gulp-csso');
+let rename = require('gulp-rename');
 
-// Core CSS
-gulp.task('css', function() {
-  return gulp.src([
-    'assets/css/src/global.scss',
-    'assets/css/src/**/*.scss',
-    '!assets/css/src/output.scss',
-    '!assets/css/src/input.scss',
-    ])
-    .pipe(concat('style.min.scss'))
-    .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
-    .pipe(gulp.dest('assets/css/dist'))
-    .pipe(notify("CSS generated!"));
-});
+var css = {
+  src: 'assets/css/src/**/*.scss',
+  dest: 'assets/css/dist',
+  filename: 'style.scss'
+};
 
-// Input CSS
-gulp.task('input', function() {
-  return gulp.src([
-    'assets/css/src/input.scss',
-    ])
-    .pipe(concat('input.min.scss'))
-    .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
-    .pipe(gulp.dest('assets/css/dist'))
-    .pipe(notify("CSS generated!"));
-});
+var preview_css = {
+  src: 'assets/css/preview/**/*.scss',
+  dest: 'assets/css/dist',
+  filename: 'preview.scss'
+};
 
-// Core CSS
-gulp.task('output', function() {
-  return gulp.src([
-    'assets/css/src/output.scss',
-    ])
-    .pipe(concat('output.min.scss'))
-    .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
-    .pipe(gulp.dest('assets/css/dist'))
-    .pipe(notify("CSS generated!"));
-});
+var js = {
+  src: 'assets/js/src/**/*.js',
+  dest: 'assets/js/dist',
+  filename: 'script.js'
+};
 
-// JS lib
-gulp.task('js_lib', function() {
-  gulp.src([
-    'assets/js/src/lib/**/*.js'
-    ])
-    .pipe(concat('lib.min.js'))
-    .pipe(uglify())
-    .on('error', function (err) { gutil.log(gutil.colors.red('[Error]'), err.toString()); })
-    .pipe(gulp.dest('assets/js/dist'))
-    .pipe(notify("JS generated!"));
-});
+function style() {
+  return (
+    gulp
+      .src(css.src)
+      .pipe(concat(css.filename))
+      .pipe(sass())
+      .on("error", sass.logError)
+      .pipe(autoprefixer())
+      .pipe(gulp.dest(css.dest))
+      .pipe(csso())
+      .pipe(rename({extname: '.min.css'}))
+      .pipe(gulp.dest(css.dest))
+  );
+}
 
-// JS custom
-gulp.task('js_custom', function() {
-  gulp.src([
-    'assets/js/src/custom/**/*.js'
-    ])
-    .pipe(concat('custom.min.js'))
-    .pipe(uglify())
-    .on('error', function (err) { gutil.log(gutil.colors.red('[Error]'), err.toString()); })
-    .pipe(gulp.dest('assets/js/dist'))
-    .pipe(notify("JS generated!"));
-});
+function preview_css_method() {
+  return (
+    gulp
+      .src(preview_css.src)
+      .pipe(concat(preview_css.filename))
+      .pipe(sass())
+      .on("error", sass.logError)
+      .pipe(autoprefixer())
+      .pipe(gulp.dest(preview_css.dest))
+      .pipe(csso())
+      .pipe(rename({extname: '.min.css'}))
+      .pipe(gulp.dest(preview_css.dest))
+  );
+}
 
-// Default
-gulp.task('default', function() {
-    gulp.watch('assets/css/src/**/*.scss', ['css']);
-    gulp.watch('assets/css/src/input.scss', ['input']);
-    gulp.watch('assets/css/src/output.scss', ['output']);
-    gulp.watch('assets/js/src/lib/**/*.js', ['js_lib' ]);
-    gulp.watch('assets/js/src/custom/**/*.js', ['js_custom' ]);
-});
+function script() {
+  return (
+    gulp
+      .src(js.src)
+      .pipe(concat(js.filename))
+      .pipe(gulp.dest(js.dest))
+      .pipe(uglify())
+      .pipe(rename({extname: '.min.js'}))
+      .pipe(gulp.dest(js.dest))
+  );
+}
+
+function watch(){
+  gulp.watch(css.src, style);
+  gulp.watch(preview_css.src, preview_css_method);
+  gulp.watch(js.src, script);
+}
+
+exports.css = style;
+exports.preview_css = preview_css;
+exports.js = script;
+exports.default = watch;

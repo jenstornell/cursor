@@ -1,0 +1,239 @@
+#sidebar {
+  display: flex;
+  flex-direction: column;
+  min-width: 300px;
+  width: 300px;
+  background: #222;
+  color: #fff;
+
+  .logo {
+    color: #000;
+    padding: 0 1rem;
+    height: 4rem;
+    font-size: 1.5rem;
+    background: rgb(255,204,0);
+    font-family: Inconsolata;
+    font-weight: bold;
+    align-items: center;
+    display: flex;
+  }
+
+  aside-bar {
+    display: flex;
+    height: 3rem;
+    margin-bottom: .5rem;
+
+    ul {
+      display: flex;
+      overflow: hidden;
+      width: 100%;
+
+      li {
+        display: flex;
+
+        figure {
+          display: flex;
+          width: 3rem;
+          height: 3rem;
+          align-items: center;
+          justify-content: center;
+
+          &:hover {
+            background: #111;
+
+            img {
+              opacity: 1;
+            }
+          }
+
+          img {
+            width: 24px;
+            opacity: .5;
+          }
+        }
+
+        &.image {
+          form {
+            display: flex;
+          }
+        }
+      }
+    }
+
+    input[type="file"] {
+      z-index: -1;
+      position: absolute;
+    }
+  }
+
+  file-explorer {
+    display: block;
+    overflow: auto;
+    flex: 1;
+
+    span {
+      color: #666;
+    }
+  }
+
+  file-operations {
+    display: block;
+    overflow: auto;
+
+    widget-create,
+    widget-rename,
+    widget-delete {
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      border-radius: .25rem;
+      background: #333;
+
+      margin: .5rem;
+    }
+
+    .error {
+      background: #be5046;
+      color: rgba(255,255,255,0.75);
+      padding: 1rem;
+      border-radius: .25rem;
+      margin-bottom: .25rem;
+      line-height: 1.3;
+    }
+
+    label {
+      color: rgba(255,255,255, .5);
+      margin-bottom: .5rem;
+      display: block;
+      font-size: .8rem;
+      text-transform: uppercase;
+    }
+
+    input[type="text"] {
+      border: none;
+      width: 100%;
+      box-sizing: border-box;
+      padding: .5rem 1rem;
+      font-size: 1rem;
+      border-radius: .25rem;
+    }
+
+    input[type="submit"] {
+      border: none;
+      font-size: 1rem;
+      padding: .5rem 1rem;
+      background: rgba(255,255,255,.1);
+      color: rgba(255,255,255,.5);
+      border-radius: .25rem;
+
+      &:hover {
+        background: rgba(255,255,255,.15);
+      }
+    }
+  }
+
+  .logout {
+    a {
+      padding: .5rem 0;
+      margin: .5rem;
+      display: block;
+      color: rgba(255,255,255,0.5);
+      background: rgba(255,255,255,0.2);
+      border-radius: .25rem;
+      text-align: center;
+      text-decoration: none;
+      margin-top: 0;
+
+      &:hover {
+        background: rgba(255,255,255,0.25);
+      }
+    }
+  }
+}
+
+widget-active {
+  display: block;
+  margin-bottom: 1rem;
+  h2 {
+    color: #ccc;
+    font-size: 1.25rem;
+    font-weight: bold;
+    font-family: Inconsolata;
+    margin-bottom: .5rem;
+    padding: 1rem;
+  }
+
+  a {
+    color: #ccc;
+    text-decoration: none;
+    align-items: center;
+    display: flex;
+    padding: 0 1rem;
+
+    figure {
+      display: flex;
+      padding-right: .5rem;
+      opacity: .5;
+    }
+  }
+}
+
+file-explorer .folder a,
+file-explorer .current-folder a,
+file-explorer .file a,
+file-explorer .back a {
+  background-position: 1rem center;
+  background-repeat: no-repeat;
+  background-size: 20px;
+}
+
+file-explorer .folder a {
+  background-image: url(../../icons/ion-folder.svg);
+}
+
+file-explorer .current-folder a {
+  background-image: url(../../icons/ion-return-left.svg);
+}
+
+file-explorer .file a {
+  background-image: url(../../icons/ion-document.svg);
+}
+
+file-explorer .back a {
+  background-image: url(../../icons/ion-return-left.svg);
+}
+
+file-explorer a {
+  color: #ccc;
+  text-decoration: none;
+  display: block;
+  padding-top: .2rem;
+  padding-bottom: .2rem;
+  padding-left: calc(20px + 1.5rem);
+
+  font-family: roboto;
+  font-size: 14px;
+}
+
+file-explorer a:hover {
+  background-color: #111;
+}
+
+file-explorer {
+  .file,
+  .folder {
+
+    &[data-active="true"] a {
+      background-color: #111;
+    }
+  }
+
+  h2 {
+    color: #ccc;
+    font-size: 1.25rem;
+    font-weight: bold;
+    font-family: Inconsolata;
+    margin-bottom: .5rem;
+    padding: 1rem;
+  }
+}

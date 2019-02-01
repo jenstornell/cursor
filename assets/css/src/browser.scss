@@ -1,0 +1,49 @@
+.browser {
+  background: #fafafa;
+  display: flex;
+  flex: 1;
+  padding: 4rem;
+
+  ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    margin: -2rem;
+
+    li {
+      padding: 2rem;
+      user-select: none;
+      cursor: default;
+      font-family: roboto;
+      width: 150px;
+
+      img {
+        max-height: 150px;
+        max-width: 150px;
+        margin-bottom: 1rem;
+      }
+
+      .filename,
+      .filesize {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .filename {
+        color: #0367d8;
+        font-weight: bold;
+        margin-bottom: .5rem;
+      }
+
+      .filesize {
+
+      }
+
+      &:hover {
+        background: #eee;
+        border-radius: .5rem;
+      }
+    }
+  }
+}

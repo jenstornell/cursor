@@ -1,0 +1,112 @@
+@-webkit-keyframes rotation {
+  from {
+      transform: rotate(0deg);
+  }
+  to {
+      transform: rotate(359deg);
+  }
+}
+
+stair-case {
+  display: block;
+  font-family: Arial, Helvetica, sans-serif;
+  padding: 1rem;
+
+  ul {
+      margin-left: 1rem;
+      list-style: none;
+
+      li {
+          cursor: default;
+          user-select: none;
+          font-size: .9rem;
+          margin-top: -.2rem;
+          margin-bottom: -.2rem;
+          color: #222;
+
+          &[data-sc-active] {
+              > .sc-current {
+                  > .sc-name,
+                  > .sc-name:hover {
+                      background: hsl(212, 97%, 43%);
+                      color: #fff;
+                  }
+              }
+          }
+
+          .sc-current {
+              align-items: center;
+              display: flex;
+          }
+
+          > [data-sc-children] {
+              display: none;
+          }
+
+          &[data-sc-state="open"] {
+              > [data-sc-children] {
+                  display: block;
+              }
+          }
+
+          .sc-name,
+          .sc-icon {
+              border-radius: .2rem;
+          }
+
+          .sc-icon {
+              padding: 0 .2rem;
+              background-size: 18px 18px;
+              background-position: center;
+              background-repeat: no-repeat;
+              min-width: 24px;
+              height: 24px;
+          }
+
+          .sc-name {
+              height: 24px;
+              line-height: 24px;
+              padding-left: .2rem;
+              margin-top: .2rem;
+              margin-bottom: .2rem;
+              padding-right: .2rem;
+
+              &:hover {
+                  background-color: #ddd;
+              }
+          }
+
+          &[data-sc-type="folder"] {
+              > .sc-current > .sc-icon {
+                  background-image: url('../../images/folder-solid.svg');
+
+                  &:hover {
+                      background-color: #ddd;
+                  }
+              }
+
+              &[data-sc-state="open"] > .sc-current > .sc-icon {
+                  background-image: url('../../images/folder-open-solid.svg');
+              }
+
+              &.sc-loading > .sc-current > .sc-icon {
+                  background-image: url('../../images/sync-solid.svg');
+                  animation: rotation 2s infinite linear;
+
+                  &:hover {
+                      background-color: transparent;
+                  }
+              }
+          }
+          &[data-sc-type="file"] {
+              .sc-icon {
+                  background-image: url('../../images/file-regular.svg');
+              }
+          }
+      }
+  }
+
+  > ul {
+      margin-left: 0;
+  }
+}
