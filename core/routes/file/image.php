@@ -1,5 +1,5 @@
 <?php
-route('api/image/:any', function($matches) {
+route('api/image/:all', function($matches) {
   $path = option('project.path') . '/' . $matches[1];
   $extension = pathinfo($path, PATHINFO_EXTENSION);
 

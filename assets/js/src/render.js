@@ -29,7 +29,12 @@ class Render {
   }
 
   updateFilepath(id) {
-    $('[data-path]').innerHTML = id;
+    let filename = id.substring(id.lastIndexOf('/')+1);
+    let dirpath = id.split("/").slice(0,-1).join("/");
+    console.log(filename);
+    console.log(dirpath);
+    $('[data-path] span').innerHTML = dirpath;
+    $('[data-path] input').value = filename;
   }
 
   updatePending() {

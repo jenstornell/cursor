@@ -19,26 +19,27 @@
   <?php
     $preview_width = '[data-preview-width] { max-width: ' . option('preview.width', 900) . 'px; }';
     $editor_width = '[data-editor-width] { max-width: ' . option('preview.width', 900) . 'px; }';
+    $sidebar_width = 'aside { width: ' . option('sidebar.width', 300) . 'px; }';
   ?>
 
-  <?= '<style>' . $preview_width . $editor_width . '</style>'; ?>
+  <?= '<style>' . $preview_width . $editor_width . $sidebar_width . '</style>'; ?>
 </head>
 <body data-state="welcome">
   <div class="pending"></div>
   <?= snippet('aside'); ?>
   <main>
     <?= snippet('topbar'); ?>
-    <div class="split">
+    <div class="split state">
       <?= snippet('editor'); ?>
       <?= snippet('preview'); ?>
     </div>
-    <div class="welcome">
+    <div class="welcome state">
       <h1>Welcome to Markia!</h1>
       <p>Select a markdown file to get started!</p>
     </div>
-    <div class="browser">
+    <div class="browser state">
     </div>
-    <div class="image">
+    <div class="image state">
       <figure>
         <img src="">
       </figure>
@@ -57,7 +58,6 @@ $json = json_encode(option());
   let options = <?= $json; ?>;
   let fullscreen = new Fullscreen();
   let render = new Render();
-  let message = new Message();
   let save = new Save({
     render: render,
     root: '<?= option('root.url'); ?>',
@@ -66,15 +66,18 @@ $json = json_encode(option());
   let fileread = new FileRead({
     render: render,
     root: '<?= option('root.url'); ?>',
-    message: message,
   });
   let folderread = new FolderRead({
     render: render,
+    fileread, fileread,
     root: '<?= option('root.url'); ?>',
-    message: message,
   });
-  message.init();
+  let filerename = new FileRename({
+    render: render,
+    root: '<?= option('root.url'); ?>',
+  });
   save.init();
+  filerename.init();
 
   document.addEventListener("DOMContentLoaded", (event) => {
     fullscreen.init();

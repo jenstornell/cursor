@@ -1,18 +1,7 @@
-:root {
-  --warning-bkg: hsl(45, 100%, 51%);
-  --warining-color: hsl(210, 10%, 23%);
-}
-
-.test {
-  background: #fff;
-  height: 2000px;
-  width: 900px;
-}
-
 ms-box {
   background: #000;
   position: fixed;
-  top: 3rem;
+  top: 1rem;
   right: 1rem;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 14px;
@@ -37,7 +26,7 @@ ms-box {
     transition: opacity 0s linear;
   }
 
-  &[data-open][data-open-text] {
+  &[data-open][data-reveal] {
     visibility: visible;
     opacity: 1;
     transition: opacity 0s linear;
@@ -49,13 +38,13 @@ ms-box {
     background-position: center;
     background-repeat: no-repeat;
     display: block;
-    padding: .5rem;
+    padding: .4rem;
   }
 
   ms-box-text {
     display: none;
     flex: 1;
-    margin-left: 1rem;
+    padding: .4rem;
     line-height: 1.3;
 
     p {
@@ -72,7 +61,6 @@ ms-box {
     background-repeat: no-repeat;
     background-position: center;
     background-color: rgba(0,0,0,.25);
-    padding: .5rem;
     height: 24px;
     width: 24px;
     margin-left: 1rem;
@@ -80,22 +68,19 @@ ms-box {
     border-radius: .25rem;
   }
 
-  &[data-open-text] {
-    //transition: none;
-    padding: 1rem;
+  &[data-reveal] {
+    padding: .2rem;
 
     ms-box-text {
       display: block;
     }
     ms-close-button {
       display: block;
+      padding: .2rem;
     }
 
     ms-box-icon {
-      padding: 0;
-      background-size: 32px;
-      height: 32px;
-      width: 32px;
+      display: none;
     }
   }
 

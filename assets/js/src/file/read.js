@@ -10,12 +10,7 @@ class FileRead {
     if(pending) {
       if(!confirm('The current file has not been saved. Load anyway?')) return;
     }
-    message.open({
-      type: 'loading',
-      autohide: false,
-      openText: false
-    });
-    $('ms-box').dataset.autohide = '';
+    message.open('loading', {autohide: false});
     this.ajax(id);
   }
 
@@ -33,21 +28,21 @@ class FileRead {
     })
     .then((text) => {
       if(!isJson(text)) {
-        this.messageError(text);
+        message.open(false, text);
       } else {
         let results = JSON.parse(text);
         if(!results.success) {
-          this.messageError(results.message);
+          message.open(false, results.message);
         } else if(results.type == 'md') {
-          this.toMarkdown(results);
+          this.toMarkdown(id, results);
         } else if(results.type == 'image') {
-          this.toImage(results);
+          this.toImage(id, results);
         }
       }
     });
   }
 
-  toMarkdown(results) {
+  toMarkdown(id, results) {
     let textarea = $('.editor textarea');
           
     textarea.value = results.text;
@@ -64,7 +59,7 @@ class FileRead {
     delete $('ms-box').dataset.open;
   }
 
-  toImage() {
+  toImage(id, results) {
     $('body').dataset.state = 'image';
     $('.image img').setAttribute('src' , results.url);
 
@@ -74,12 +69,5 @@ class FileRead {
     
     delete $('body').dataset.pending;
     delete $('ms-box').dataset.open;
-  }
-
-  messageError(msg) {
-    message.open({
-      text: msg,
-      type: 'error',
-    });
   }
 }

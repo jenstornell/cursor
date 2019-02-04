@@ -92,7 +92,12 @@ class Render {
   }
 
   updateFilepath(id) {
-    $('[data-path]').innerHTML = id;
+    let filename = id.substring(id.lastIndexOf('/')+1);
+    let dirpath = id.split("/").slice(0,-1).join("/");
+    console.log(filename);
+    console.log(dirpath);
+    $('[data-path] span').innerHTML = dirpath;
+    $('[data-path] input').value = filename;
   }
 
   updatePending() {
@@ -132,12 +137,7 @@ class FileRead {
     if(pending) {
       if(!confirm('The current file has not been saved. Load anyway?')) return;
     }
-    message.open({
-      type: 'loading',
-      autohide: false,
-      openText: false
-    });
-    $('ms-box').dataset.autohide = '';
+    message.open('loading', {autohide: false});
     this.ajax(id);
   }
 
@@ -155,21 +155,21 @@ class FileRead {
     })
     .then((text) => {
       if(!isJson(text)) {
-        this.messageError(text);
+        message.open(false, text);
       } else {
         let results = JSON.parse(text);
         if(!results.success) {
-          this.messageError(results.message);
+          message.open(false, results.message);
         } else if(results.type == 'md') {
-          this.toMarkdown(results);
+          this.toMarkdown(id, results);
         } else if(results.type == 'image') {
-          this.toImage(results);
+          this.toImage(id, results);
         }
       }
     });
   }
 
-  toMarkdown(results) {
+  toMarkdown(id, results) {
     let textarea = $('.editor textarea');
           
     textarea.value = results.text;
@@ -186,7 +186,7 @@ class FileRead {
     delete $('ms-box').dataset.open;
   }
 
-  toImage() {
+  toImage(id, results) {
     $('body').dataset.state = 'image';
     $('.image img').setAttribute('src' , results.url);
 
@@ -197,11 +197,69 @@ class FileRead {
     delete $('body').dataset.pending;
     delete $('ms-box').dataset.open;
   }
+}
+class FileRename {
+  constructor(params) {
+    this.render = params.render;
+    this.root = params.root;
+  }
 
-  messageError(msg) {
-    message.open({
-      text: msg,
-      type: 'error',
+  init() {
+    this.events();
+  }
+
+  events() {
+    this.onChange();
+  }
+
+  onChange() {
+    $('.topbar .path input').addEventListener('keyup', (e) => {
+      if(e.code == 'Enter') {
+        e.target.blur();
+        this.rename();
+      }
+    });
+  }
+
+  rename() {
+    if(!confirm('Rename the current file?')) return;
+    message.open('loading', {autohide: false});
+    this.ajax();
+  }
+
+  ajax() {
+    let path = this.root + '/api/file/rename';
+    let data = {};
+    data.id = $('[data-sc-active]').dataset.scName;
+    data.filename = $('[data-path] input').value;
+
+    message.open('loading', {autohide: false});
+
+    fetch(path, {
+      method: 'post',
+      body: JSON.stringify(data),
+    })
+    .then((response) => {
+        return response.text();
+    })
+    .then((text) => {
+      message.open(false, text);
+
+      let results = JSON.parse(text);
+
+      if(!isJson(text)) {
+        message.open(false, text);
+      } else {
+        if(!results.success) {
+          message.open(false, results.message);
+        } else {
+          console.log(results);
+          let el = $('[data-sc-name="' + results.old_id + '"]');
+          el.dataset.scName = results.new_id;
+          $('.sc-name', el).innerHTML = results.new_filename;
+          message.open();
+        }
+      }
     });
   }
 }
@@ -235,34 +293,20 @@ class Save {
     })
     .then((text) => {
       if(!isJson(text)) {
-        this.messageError(text);
+        message.open(false, text);
       } else {
         let results = JSON.parse(text);
         if(!results.success) {
-          this.messageError(results.message);
+          message.open(false, results.message);
         } else {
           latest = $('.editor textarea').value;
           this.render.updatePending();
           this.render.updateTimestamp(results.timestamp);
-          this.messageOpen(results);
+          message.open();
           this.resetTimeout();
           this.startTimeout();
         }
       }
-    });
-  }
-
-  messageOpen(results) {
-    message.open({
-      text: results.message,
-      type: 'success',
-    });
-  }
-
-  messageError(msg) {
-    message.open({
-      text: msg,
-      type: 'error',
     });
   }
 
@@ -304,11 +348,7 @@ class Save {
     if(!this.allowed()) {
       this.startTimeout();
     } else {
-      message.open({
-        type: 'loading',
-        autohide: false,
-        openText: false
-      });
+      message.open('loading', {autohide: false});
       this.ajax();
     }
   }
@@ -320,6 +360,7 @@ class Save {
 class FolderRead {
   constructor(params) {
     this.render = params.render;
+    this.fileread = params.fileread;
     this.root = params.root;
     this.message = params.message;
   }
@@ -329,11 +370,7 @@ class FolderRead {
     if(pending) {
       if(!confirm('The current file has not been saved. Load anyway?')) return;
     }
-    message.open({
-      type: 'loading',
-      autohide: false,
-      openText: false
-    });
+    message.open('loading', {autohide: false});
     $('ms-box').dataset.autohide = '';
     this.ajax(id);
   }
@@ -352,26 +389,77 @@ class FolderRead {
     })
     .then((text) => {
       if(!isJson(text)) {
-        this.messageError(text);
+        message.open(false, text);
       } else {
         let results = JSON.parse(text);
         if(!results.success) {
-          this.messageError(results.message);
+          message.open(false, results.message);
         } else {
-          //this.toImage(results);
-          console.log(results);
           $('body').dataset.state = 'browser';
           $('.browser').innerHTML = results.html;
+          render.updateFilepath(id);
+          delete $('ms-box').dataset.open;
+          this.onClick();
         }
       }
     });
   }
 
-  messageError(msg) {
-    message.open({
-      text: msg,
-      type: 'error',
+  onFolderClick() {
+    $$('.browser [data-folder]').forEach(el => {
+      el.dataset.scActive = '';
+      el.addEventListener('click', (e) => {
+        let id = e.currentTarget.dataset.id;
+        let tree_el = $('[data-sc-name="' + id + '"]');
+
+        $$('[data-sc-name]').forEach(el => {
+          delete el.dataset.scActive;
+        });
+
+        if(!tree_el) return;
+
+        this.openParent(tree_el);
+        this.get(id);
+
+        tree_el.dataset.scActive = '';
+      });
     });
+  }
+
+  onClick() {
+    $$('.browser [data-id]').forEach(el => {
+      el.dataset.scActive = '';
+      el.addEventListener('click', (e) => {
+        let type = el.dataset.type;
+        let id = e.currentTarget.dataset.id;
+        let tree_el = $('[data-sc-name="' + id + '"]');
+
+        $$('[data-sc-name]').forEach(el => {
+          delete el.dataset.scActive;
+        });
+
+        if(!tree_el) return;
+
+        this.openParent(tree_el);
+
+        if(type == 'file') {
+          this.fileread.get(id);
+        } else {
+          this.get(id);
+        }
+        
+        tree_el.dataset.scActive = '';
+      });
+    });
+  }
+
+  openParent(el) {
+    let closest = el.parentNode.closest('li');
+
+    if(!closest) return;
+    
+    closest.dataset.scState = 'open';
+    this.openParent(closest);
   }
 }
 /**
@@ -2351,10 +2439,114 @@ class FolderRead {
     root.marked = marked;
   }
   })(this || (typeof window !== 'undefined' ? window : global));
-class Message {
+class MessageBase {
+  addTemplate() {
+    if(!this.$(`#message-template`)) {
+      document.body.insertAdjacentHTML('beforeend', this.template());
+    }
+  }
+
   init() {
     this.addTemplate();
     this.events();
+  }
+
+  actionOpen(type, options) {
+    window.clearTimeout(this.timeout);
+
+    type = this.oType(type);
+    let text = this.oText(options);
+    let autohide = this.oAutohide(options, text, type);
+    let reveal = this.oReveal(options, text);
+    
+    this.o = {
+      type: type,
+      text: text,
+      autohide: autohide,
+      reveal: reveal
+    };
+    
+    this.setOpen();
+    this.setType();
+    this.setText();
+    this.setAutohide();
+    this.setReveal();
+  }
+
+  oType(type) {
+    switch(type) {
+      case null:
+        return 'success';
+      case false:
+        return 'error';
+      case true:
+        return 'success';
+      default:
+        return type;
+    }
+  }
+  
+  oText(options) {
+    if(typeof options == 'string') {
+      if(options === '') return '';
+      return options;
+    } else {
+      if(typeof options.text === 'undefined') return '';
+      if(options.text === '') return '';
+      return options.text;
+    }
+  }
+
+  oAutohide(options, text, type) {
+    if(this.has(options.autohide)) {
+      return options.autohide;
+    } else {
+      return (text === '' && type === 'success') ? true : false;
+    }
+  }
+
+  oReveal(options, text) {
+    if(this.has(options.reveal)) {
+      return options.reveal;
+    } else {
+      return (text === '') ? false : true;
+    }
+  }
+
+  setOpen() {
+    this.$('ms-box').dataset.open = '';
+  }
+
+  setType() {
+    this.$('ms-box').dataset.type = this.o.type;
+  }
+
+  setText() {
+    this.$('ms-box-text').innerHTML = this.o.text;
+  }
+
+  setAutohide() {
+    if(this.o.autohide) {
+      this.$('ms-box').dataset.autohide = '';
+
+      this.timeout = window.setTimeout(() => {
+        delete this.$('ms-box').dataset.open;
+      }, 1500);
+    } else {
+      delete this.$('ms-box').dataset.autohide;
+    }
+  }
+
+  setReveal() {
+    if(this.o.reveal) {
+      this.$('ms-box').dataset.reveal = '';
+    } else {
+      delete this.$('ms-box').dataset.reveal;
+    }
+  }
+
+  $(selector) {
+    return document.querySelector(selector);
   }
 
   events() {
@@ -2362,91 +2554,19 @@ class Message {
     this.onCloseMessageClick();
   }
 
-
   // EVENTS
 
   onOpenTextClick() {
-    document.querySelector('ms-box-icon').addEventListener('click', (e) => {
+    this.$('ms-box-icon').addEventListener('click', (e) => {
+      if(this.$('ms-box-text').innerHTML === '') return;
       this.openText();
     });
   }
 
   onCloseMessageClick() {
-    document.querySelector('ms-close-button').addEventListener('click', (e) => {
+    this.$('ms-close-button').addEventListener('click', (e) => {
       this.closeMessage();
     });
-  }
-
-  // ACTIONS
-
-  // Open message box
-  open(options) {
-    window.clearTimeout(this.timeout);
-    this.o = Object.assign({}, this.defaults(options.type), options);
-
-    document.querySelector('ms-box').dataset.open = '';
-    document.querySelector('ms-box').dataset.type = this.o.type;
-
-    if(this.o.autohide) {
-      document.querySelector('ms-box').dataset.autohide = '';
-    } else {
-      delete document.querySelector('ms-box').dataset.autohide;
-    }
-
-    if(this.o.openText) {
-      document.querySelector('ms-box').dataset.openText = '';
-    } else {
-      delete document.querySelector('ms-box').dataset.openText;
-    }
-    document.querySelector('ms-box-text').innerHTML = this.o.text;
-
-    this.autohide();
-    if(this.o.openText) {
-      this.openText();
-    }
-  }
-
-  has(data) {
-    return (typeof data !== 'undefined');
-  }
-
-  autohide() {
-    if(this.o.autohide && !this.has(document.querySelector('ms-box').dataset.openText)) {
-      this.timeout = window.setTimeout(() => {
-        delete document.querySelector('ms-box').dataset.open;
-      }, 1500);
-    }
-  }
-
-  defaults(type) {
-    if(type == 'success') {
-      return {
-        openText: false,
-        autohide: true,
-      };
-    } else {
-      return {
-        openText: true,
-        autohide: false,
-      }
-    }
-  }
-
-  openText() {
-    window.clearTimeout(this.timeout);
-    document.querySelector('ms-box').dataset.openText = '';
-    delete document.querySelector('ms-box').dataset.autohide;
-  }
-
-  closeMessage() {
-    delete document.querySelector('ms-box').dataset.open;
-    delete document.querySelector('ms-box').dataset.openText;
-  }
-
-  addTemplate() {
-    if(!document.querySelector(`#message-template`)) {
-      document.body.insertAdjacentHTML('beforeend', this.template());
-    }
   }
 
   template() {
@@ -2458,7 +2578,33 @@ class Message {
       </ms-box>
     `;
   }
+
+  has(data) {
+    return (typeof data !== 'undefined');
+  }
+
+  closeMessage() {
+    delete this.$('ms-box').dataset.open;
+    delete this.$('ms-box').dataset.openText;
+  }
 }
+
+class message {
+  static open(type = null, options = {}) {
+    let base = new MessageBase();
+    base.actionOpen(type, options);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  if(
+    typeof document.body.dataset.messageInit !== 'undefined' &&
+    document.body.dataset.messageInit === 'false'
+  ) return;
+
+  let base = new MessageBase();
+  base.init();
+});
 class Staircase {
   constructor(options) {
     this.o = Object.assign({}, this.defaults(), options);

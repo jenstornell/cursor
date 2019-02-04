@@ -7,9 +7,12 @@
       <li class="add-folder">
         <img src="<?= option('root.url'); ?>/assets/images/folder-solid.svg">
       </li>
+      <?php /*
       <li class="add-refresh">
         <img src="<?= option('root.url'); ?>/assets/images/refresh-cw.svg">
       </li>
+      */
+      ?>
     </ul>
   </div>
   <stair-case></stair-case>

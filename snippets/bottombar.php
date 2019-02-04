@@ -1,13 +1,13 @@
 <?php $hide = option('bar.bottom', true) ? '' : 'data-hide'; ?>
 
-<div class="bottombar" <?= $hide; ?>>
+<div class="bottombar state" <?= $hide; ?>>
   <ul>
-    <li class="count">
+    <li class="count state">
     </li>
   </ul>
   <ul>
-    <li class="dimensions"></li>
-    <li class="filesize"></li>
-    <li class="timestamp"></li>
+    <li class="dimensions state"></li>
+    <li class="filesize state"></li>
+    <li class="timestamp state"></li>
   </ul>
 </div>

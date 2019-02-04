@@ -4,6 +4,12 @@
   flex: 1;
   padding: 4rem;
 
+  h1 {
+    padding: 4rem;
+    font-family: roboto;
+    font-size: 1.5rem;
+  }
+
   ul {
     list-style: none;
     display: flex;
@@ -17,10 +23,17 @@
       font-family: roboto;
       width: 150px;
 
+      figure {
+        height: 150px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 1rem;
+      }
+
       img {
         max-height: 150px;
         max-width: 150px;
-        margin-bottom: 1rem;
       }
 
       .filename,

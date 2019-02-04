@@ -28,34 +28,20 @@ class Save {
     })
     .then((text) => {
       if(!isJson(text)) {
-        this.messageError(text);
+        message.open(false, text);
       } else {
         let results = JSON.parse(text);
         if(!results.success) {
-          this.messageError(results.message);
+          message.open(false, results.message);
         } else {
           latest = $('.editor textarea').value;
           this.render.updatePending();
           this.render.updateTimestamp(results.timestamp);
-          this.messageOpen(results);
+          message.open();
           this.resetTimeout();
           this.startTimeout();
         }
       }
-    });
-  }
-
-  messageOpen(results) {
-    message.open({
-      text: results.message,
-      type: 'success',
-    });
-  }
-
-  messageError(msg) {
-    message.open({
-      text: msg,
-      type: 'error',
     });
   }
 
@@ -97,11 +83,7 @@ class Save {
     if(!this.allowed()) {
       this.startTimeout();
     } else {
-      message.open({
-        type: 'loading',
-        autohide: false,
-        openText: false
-      });
+      message.open('loading', {autohide: false});
       this.ajax();
     }
   }

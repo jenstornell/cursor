@@ -1,6 +1,7 @@
 class FolderRead {
   constructor(params) {
     this.render = params.render;
+    this.fileread = params.fileread;
     this.root = params.root;
     this.message = params.message;
   }
@@ -10,11 +11,7 @@ class FolderRead {
     if(pending) {
       if(!confirm('The current file has not been saved. Load anyway?')) return;
     }
-    message.open({
-      type: 'loading',
-      autohide: false,
-      openText: false
-    });
+    message.open('loading', {autohide: false});
     $('ms-box').dataset.autohide = '';
     this.ajax(id);
   }
@@ -33,25 +30,76 @@ class FolderRead {
     })
     .then((text) => {
       if(!isJson(text)) {
-        this.messageError(text);
+        message.open(false, text);
       } else {
         let results = JSON.parse(text);
         if(!results.success) {
-          this.messageError(results.message);
+          message.open(false, results.message);
         } else {
-          //this.toImage(results);
-          console.log(results);
           $('body').dataset.state = 'browser';
           $('.browser').innerHTML = results.html;
+          render.updateFilepath(id);
+          delete $('ms-box').dataset.open;
+          this.onClick();
         }
       }
     });
   }
 
-  messageError(msg) {
-    message.open({
-      text: msg,
-      type: 'error',
+  onFolderClick() {
+    $$('.browser [data-folder]').forEach(el => {
+      el.dataset.scActive = '';
+      el.addEventListener('click', (e) => {
+        let id = e.currentTarget.dataset.id;
+        let tree_el = $('[data-sc-name="' + id + '"]');
+
+        $$('[data-sc-name]').forEach(el => {
+          delete el.dataset.scActive;
+        });
+
+        if(!tree_el) return;
+
+        this.openParent(tree_el);
+        this.get(id);
+
+        tree_el.dataset.scActive = '';
+      });
     });
+  }
+
+  onClick() {
+    $$('.browser [data-id]').forEach(el => {
+      el.dataset.scActive = '';
+      el.addEventListener('click', (e) => {
+        let type = el.dataset.type;
+        let id = e.currentTarget.dataset.id;
+        let tree_el = $('[data-sc-name="' + id + '"]');
+
+        $$('[data-sc-name]').forEach(el => {
+          delete el.dataset.scActive;
+        });
+
+        if(!tree_el) return;
+
+        this.openParent(tree_el);
+
+        if(type == 'file') {
+          this.fileread.get(id);
+        } else {
+          this.get(id);
+        }
+        
+        tree_el.dataset.scActive = '';
+      });
+    });
+  }
+
+  openParent(el) {
+    let closest = el.parentNode.closest('li');
+
+    if(!closest) return;
+    
+    closest.dataset.scState = 'open';
+    this.openParent(closest);
   }
 }

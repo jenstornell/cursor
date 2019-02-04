@@ -1,7 +1,111 @@
-class Message {
+class MessageBase {
+  addTemplate() {
+    if(!this.$(`#message-template`)) {
+      document.body.insertAdjacentHTML('beforeend', this.template());
+    }
+  }
+
   init() {
     this.addTemplate();
     this.events();
+  }
+
+  actionOpen(type, options) {
+    window.clearTimeout(this.timeout);
+
+    type = this.oType(type);
+    let text = this.oText(options);
+    let autohide = this.oAutohide(options, text, type);
+    let reveal = this.oReveal(options, text);
+    
+    this.o = {
+      type: type,
+      text: text,
+      autohide: autohide,
+      reveal: reveal
+    };
+    
+    this.setOpen();
+    this.setType();
+    this.setText();
+    this.setAutohide();
+    this.setReveal();
+  }
+
+  oType(type) {
+    switch(type) {
+      case null:
+        return 'success';
+      case false:
+        return 'error';
+      case true:
+        return 'success';
+      default:
+        return type;
+    }
+  }
+  
+  oText(options) {
+    if(typeof options == 'string') {
+      if(options === '') return '';
+      return options;
+    } else {
+      if(typeof options.text === 'undefined') return '';
+      if(options.text === '') return '';
+      return options.text;
+    }
+  }
+
+  oAutohide(options, text, type) {
+    if(this.has(options.autohide)) {
+      return options.autohide;
+    } else {
+      return (text === '' && type === 'success') ? true : false;
+    }
+  }
+
+  oReveal(options, text) {
+    if(this.has(options.reveal)) {
+      return options.reveal;
+    } else {
+      return (text === '') ? false : true;
+    }
+  }
+
+  setOpen() {
+    this.$('ms-box').dataset.open = '';
+  }
+
+  setType() {
+    this.$('ms-box').dataset.type = this.o.type;
+  }
+
+  setText() {
+    this.$('ms-box-text').innerHTML = this.o.text;
+  }
+
+  setAutohide() {
+    if(this.o.autohide) {
+      this.$('ms-box').dataset.autohide = '';
+
+      this.timeout = window.setTimeout(() => {
+        delete this.$('ms-box').dataset.open;
+      }, 1500);
+    } else {
+      delete this.$('ms-box').dataset.autohide;
+    }
+  }
+
+  setReveal() {
+    if(this.o.reveal) {
+      this.$('ms-box').dataset.reveal = '';
+    } else {
+      delete this.$('ms-box').dataset.reveal;
+    }
+  }
+
+  $(selector) {
+    return document.querySelector(selector);
   }
 
   events() {
@@ -9,91 +113,19 @@ class Message {
     this.onCloseMessageClick();
   }
 
-
   // EVENTS
 
   onOpenTextClick() {
-    document.querySelector('ms-box-icon').addEventListener('click', (e) => {
+    this.$('ms-box-icon').addEventListener('click', (e) => {
+      if(this.$('ms-box-text').innerHTML === '') return;
       this.openText();
     });
   }
 
   onCloseMessageClick() {
-    document.querySelector('ms-close-button').addEventListener('click', (e) => {
+    this.$('ms-close-button').addEventListener('click', (e) => {
       this.closeMessage();
     });
-  }
-
-  // ACTIONS
-
-  // Open message box
-  open(options) {
-    window.clearTimeout(this.timeout);
-    this.o = Object.assign({}, this.defaults(options.type), options);
-
-    document.querySelector('ms-box').dataset.open = '';
-    document.querySelector('ms-box').dataset.type = this.o.type;
-
-    if(this.o.autohide) {
-      document.querySelector('ms-box').dataset.autohide = '';
-    } else {
-      delete document.querySelector('ms-box').dataset.autohide;
-    }
-
-    if(this.o.openText) {
-      document.querySelector('ms-box').dataset.openText = '';
-    } else {
-      delete document.querySelector('ms-box').dataset.openText;
-    }
-    document.querySelector('ms-box-text').innerHTML = this.o.text;
-
-    this.autohide();
-    if(this.o.openText) {
-      this.openText();
-    }
-  }
-
-  has(data) {
-    return (typeof data !== 'undefined');
-  }
-
-  autohide() {
-    if(this.o.autohide && !this.has(document.querySelector('ms-box').dataset.openText)) {
-      this.timeout = window.setTimeout(() => {
-        delete document.querySelector('ms-box').dataset.open;
-      }, 1500);
-    }
-  }
-
-  defaults(type) {
-    if(type == 'success') {
-      return {
-        openText: false,
-        autohide: true,
-      };
-    } else {
-      return {
-        openText: true,
-        autohide: false,
-      }
-    }
-  }
-
-  openText() {
-    window.clearTimeout(this.timeout);
-    document.querySelector('ms-box').dataset.openText = '';
-    delete document.querySelector('ms-box').dataset.autohide;
-  }
-
-  closeMessage() {
-    delete document.querySelector('ms-box').dataset.open;
-    delete document.querySelector('ms-box').dataset.openText;
-  }
-
-  addTemplate() {
-    if(!document.querySelector(`#message-template`)) {
-      document.body.insertAdjacentHTML('beforeend', this.template());
-    }
   }
 
   template() {
@@ -105,4 +137,30 @@ class Message {
       </ms-box>
     `;
   }
+
+  has(data) {
+    return (typeof data !== 'undefined');
+  }
+
+  closeMessage() {
+    delete this.$('ms-box').dataset.open;
+    delete this.$('ms-box').dataset.openText;
+  }
 }
+
+class message {
+  static open(type = null, options = {}) {
+    let base = new MessageBase();
+    base.actionOpen(type, options);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  if(
+    typeof document.body.dataset.messageInit !== 'undefined' &&
+    document.body.dataset.messageInit === 'false'
+  ) return;
+
+  let base = new MessageBase();
+  base.init();
+});

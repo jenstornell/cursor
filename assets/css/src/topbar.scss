@@ -1,7 +1,6 @@
 .topbar {
   background: #eee;
   border-bottom: 1px solid #ccc;
-  display: flex;
   height: 2.5rem;
   justify-content: space-between;
   align-items: center;
@@ -11,10 +10,7 @@
   ul {
     display: flex;
     list-style: none;
-
-    li {
-
-    }
+    flex: 1;
   }
 
   .path {
@@ -22,6 +18,27 @@
     height: 2rem;
     line-height: 2rem;
     font-size: .9rem;
+    display: flex;
+    flex: 1;
+    padding-right: 1rem;
+    color: #aaa;
+
+    input {
+      font-family: roboto;
+      font-size: .9rem;
+      width: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+
+      &:hover {
+        background: #fafafa;
+      }
+
+      &:focus {
+        background: #fafafa;
+      }
+    }
   }
 
   .fullscreen {
