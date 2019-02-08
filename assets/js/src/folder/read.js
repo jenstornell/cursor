@@ -50,8 +50,12 @@ class FolderRead {
     $$('.browser [data-folder]').forEach(el => {
       el.dataset.scActive = '';
       el.addEventListener('click', (e) => {
+        //console.log('click');
         let id = e.currentTarget.dataset.id;
-        let tree_el = $('[data-sc-name="' + id + '"]');
+        //console.log(id);
+        //console.log('hello');
+        staircase.open(id);
+        /*let tree_el = $('[data-sc-name="' + id + '"]');
 
         $$('[data-sc-name]').forEach(el => {
           delete el.dataset.scActive;
@@ -60,9 +64,10 @@ class FolderRead {
         if(!tree_el) return;
 
         this.openParent(tree_el);
+        */
         this.get(id);
 
-        tree_el.dataset.scActive = '';
+        //tree_el.dataset.scActive = '';
       });
     });
   }
@@ -73,28 +78,21 @@ class FolderRead {
       el.addEventListener('click', (e) => {
         let type = el.dataset.type;
         let id = e.currentTarget.dataset.id;
-        let tree_el = $('[data-sc-name="' + id + '"]');
-
-        $$('[data-sc-name]').forEach(el => {
-          delete el.dataset.scActive;
-        });
-
-        if(!tree_el) return;
-
-        this.openParent(tree_el);
 
         if(type == 'file') {
           this.fileread.get(id);
         } else {
           this.get(id);
+          action = 'folder/read';
+          buffer_id = id;
+          staircase.open(id);
         }
-        
-        tree_el.dataset.scActive = '';
       });
     });
   }
 
   openParent(el) {
+    //console.log(el);
     let closest = el.parentNode.closest('li');
 
     if(!closest) return;

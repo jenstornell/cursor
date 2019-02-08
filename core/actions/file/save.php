@@ -1,53 +1,61 @@
 <?php
 class FileSave {
-  function __construct($post) {
+  function __construct($post, $type = 'file', $filepath = null) {
     $this->id = $post['id'];
+    $this->type = $type;
     $this->text = $post['text'];
-    $this->filepath = option('project.path') . '/' . $post['id'];
+    $this->filepath = ($filepath) ? $filepath : option('project.path') . '/' . $post['id'];
     $this->json = [];
   }
 
   function save() {
-    $this->onMissingFile();
-    $this->onNotWritable();
+    if($this->type == 'file') {
+      $this->onMissingFile();
+      $this->onNotWritable();
+    }
     $this->onNotWritten();
     $this->onNotEqual();
-    $this->success();
+    return $this->success();
   }
 
   function onMissingFile() {
     if(file_exists($this->filepath)) return;
-    $this->output(false, 'Error! File does not exist!');
+    $this->output(false, 'Error! ' . ucfirst($this->type) . ' does not exist!');
   }
 
   function onNotWritable() {
     if(is_writable($this->filepath)) return;
-    $this->output(false, "Error! You don't have permission to save the file!");
+    $this->output(false, "Error! You don't have permission to save the " . $this->type . "!");
   }
 
   function onNotWritten() {
     $this->content = file_put_contents($this->filepath, $this->text);
     if($this->content !== false) return;
-    $this->output(false, 'Error! The file could not be saved!');
+    $this->output(false, 'Error! The ' . $this->type . ' could not be saved!');
   }
 
   function onNotEqual() {
     if(file_get_contents($this->filepath) === $this->text) return;
-    $this->output(false, 'Error! File is not equal to the input!');
+    $this->output(false, 'Error! ' . ucfirst($this->type) . ' is not equal to the input!');
   }
 
   function success() {
     $this->json = [
+      'success' => true,
       'timestamp' => date('H:i:s'),
     ];
-    $this->output(true);
+    $this->output = json_encode($this->json);
+  }
+
+  function get() {
+    return $this->output;
   }
 
   function output($success = false, $message = null) {
     $this->json['success'] = $success;
 
     if($message) {
-      $this->json['message'] = $this->message;
+      $this->json['message'] = $message;
     }
     echo json_encode($this->json);
     die;

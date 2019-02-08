@@ -9,7 +9,7 @@ $counter = 0;
   <?php foreach($folders as $path) : ?>
   <?php
   $part = str_replace(option('project.path') . '/', '', $path);
-  if(option('revisions.hide', true) && basename($path) == option('revisions.folder', 'revisions')) continue;
+  if(option('revisions.hide') && basename($path) == option('revisions.folder')) continue;
   $counter++;
   ?>
     <li data-type="folder" data-id="<?= $part; ?>" title="<?= basename($path); ?>">
@@ -22,7 +22,8 @@ $counter = 0;
 
   <?php foreach($files as $path) : ?>
   <?php
-  $extension = pathinfo($path)['extension'];
+  $parts = pathinfo($path);
+  $extension = (isset($parts['extension'])) ? $parts['extension'] : '';
   $part = str_replace(option('project.path') . '/', '', $path);
   if(!in_array($extension, filetypes::markdown()) && !in_array($extension, filetypes::image())) continue;
   $counter++;

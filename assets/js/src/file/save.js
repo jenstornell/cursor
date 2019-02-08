@@ -5,7 +5,7 @@ class Save {
     this.options = params.options;
     this.time = this.time();
 
-    console.log(this.time);
+    //console.log(this.time);
   }
 
   init() {
@@ -59,13 +59,8 @@ class Save {
   }
 
   time() {
-    if('autosave' in options && !options['autosave']) return false;
-
-    let time = 10;
-    if('autosave.interval' in options) {
-      time = options['autosave.interval'];
-    }
-    return time * 1000;
+    if(!options['autosave']) return false;
+    return options['autosave.interval'] * 1000;
   }
 
   startTimeout() {

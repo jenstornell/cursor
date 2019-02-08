@@ -12,7 +12,9 @@ class FileRename {
       $this->new_id = $new_filename;
     }
     $this->new_path = dirname(option('project.path') . '/' . $old_id) . '/' . $new_filename;
-
+    $this->revisions = dirname(option('project.path') . '/' . $old_id) . '/' . option('revisions.folder');
+    $this->new_revision = $this->revisions . '/' . $new_filename;
+    $this->old_revision = $this->revisions . '/' . $this->old_filename;
     $this->extension = pathinfo($this->old_filepath, PATHINFO_EXTENSION);
   }
 
@@ -22,7 +24,24 @@ class FileRename {
     $this->onDisallowedFiletype();
     $this->onAlreadyExists();
     $this->onRename();
+
+    $this->renameRevision();
+
     $this->onSuccess();
+  }
+
+  function renameRevision() {
+    if(!option('revisions.max')) return;
+    if(!file_exists($this->old_revision)) return;
+    if(file_exists($this->new_revision)) return;
+    if(!is_readable($this->revisions)) {
+      $this->json['message'] = "Error! Could not rename revision folder, because it's not readable!";
+      $this->output(false);
+    }
+
+    if(rename($this->old_revision, $this->new_revision)) return;
+    $this->json['message'] = 'Error! Could not rename revision folder!';
+    $this->output(false);
   }
 
   function onMissingFile() {
@@ -60,13 +79,11 @@ class FileRename {
   }
 
   function onSuccess() {
+    $old_folder = (contains('/', $this->old_id)) ? dirname($this->old_id) . '/' : '';
     $this->json = [
       'old_id' => $this->old_id,
-      'old_filename' => $this->old_filename,
-      'old_filepath' => $this->old_filepath,
-      'new_id' => $this->new_id,
+      'old_revision' => $old_folder . option('revisions.folder') . '/' . $this->old_filename,
       'new_filename' => $this->new_filename,
-      'new_filepath' => $this->new_path,
     ];
     $this->output(true);
   }

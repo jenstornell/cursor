@@ -5,8 +5,11 @@ body {
 
 body {
   background: #eee;
+  background: #243c61;
   display: flex;
   overflow: hidden;
+  padding: 2rem;
+  box-sizing: border-box;
 }
 
 main {
@@ -14,6 +17,8 @@ main {
   background: #fff;
   flex: 1;
   flex-direction: column;
+  border-top-right-radius: .5rem;
+  border-bottom-right-radius: .5rem;
 
   .split {
     flex: 1;

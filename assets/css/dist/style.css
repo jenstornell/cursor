@@ -7,7 +7,8 @@
   line-height: 2.5rem;
   justify-content: space-between;
   padding-right: 1rem;
-  padding-left: 1rem; }
+  padding-left: 1rem;
+  border-bottom-right-radius: .5rem; }
   .bottombar ul {
     list-style: none;
     display: flex;
@@ -154,7 +155,9 @@ ms-box {
   ms-box[data-reveal] {
     padding: .2rem; }
     ms-box[data-reveal] ms-box-text {
-      display: block; }
+      display: block;
+      word-break: break-word;
+      box-sizing: border-box; }
     ms-box[data-reveal] ms-close-button {
       display: block;
       padding: .2rem; }
@@ -239,7 +242,9 @@ aside {
   width: 300px;
   border-right: 1px solid #ccc;
   overflow-y: auto;
-  flex-direction: column; }
+  flex-direction: column;
+  border-top-left-radius: .5rem;
+  border-bottom-left-radius: .5rem; }
   aside .filebar {
     background: #ddd;
     display: flex;
@@ -262,10 +267,12 @@ aside {
         align-items: center;
         position: relative;
         border-radius: .2rem; }
+        aside .filebar ul li.add-file img {
+          height: 21px; }
         aside .filebar ul li:hover {
           background: #eee; }
         aside .filebar ul li img {
-          width: 24px;
+          width: 28px;
           height: 24px; }
   aside .add-file:after {
     content: '+';
@@ -301,14 +308,19 @@ body {
 
 body {
   background: #eee;
+  background: #243c61;
   display: flex;
-  overflow: hidden; }
+  overflow: hidden;
+  padding: 2rem;
+  box-sizing: border-box; }
 
 main {
   display: flex;
   background: #fff;
   flex: 1;
-  flex-direction: column; }
+  flex-direction: column;
+  border-top-right-radius: .5rem;
+  border-bottom-right-radius: .5rem; }
   main .split {
     flex: 1; }
     main .split .editor,
@@ -367,7 +379,7 @@ stair-case {
         border-radius: .2rem; }
       stair-case ul li .sc-icon {
         padding: 0 .2rem;
-        background-size: 18px 18px;
+        background-size: 16px 18px;
         background-position: center;
         background-repeat: no-repeat;
         min-width: 24px;
@@ -443,11 +455,14 @@ stair-case {
   justify-content: space-between;
   align-items: center;
   padding-right: 1rem;
-  padding-left: 1rem; }
+  padding-left: 1rem;
+  border-top-right-radius: .5rem; }
   .topbar ul {
     display: flex;
     list-style: none;
     flex: 1; }
+    .topbar ul:nth-child(2) {
+      justify-content: flex-end; }
   .topbar .path {
     font-family: roboto;
     height: 2rem;

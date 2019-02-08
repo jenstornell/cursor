@@ -6,11 +6,16 @@
   align-items: center;
   padding-right: 1rem;
   padding-left: 1rem;
+  border-top-right-radius: .5rem;
 
   ul {
     display: flex;
     list-style: none;
     flex: 1;
+
+    &:nth-child(2) {
+      justify-content: flex-end;
+    }
   }
 
   .path {

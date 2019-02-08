@@ -1,4 +1,4 @@
-class FileRename {
+class FileDelete {
   constructor(params) {
     this.root = params.root;
     this.options = params.options;
@@ -9,31 +9,32 @@ class FileRename {
   }
 
   events() {
-    this.onChange();
+    this.onClick();
   }
 
-  onChange() {
-    $('.topbar .path input').addEventListener('keyup', (e) => {
-      if(e.code == 'Enter') {
-        e.target.blur();
-        this.rename();
-      }
+  /*if(e.code == 'Enter') {
+    e.target.blur();
+    this.rename();
+  }*/
+
+  onClick() {
+    $('.filebar .delete').addEventListener('click', (e) => {
+      if(!$('[data-sc-type="file"][data-sc-active]')) return;
+      this.delete();
     });
   }
 
-  rename() {
-    if(!confirm('Rename the current file?')) return;
+  delete() {
+    if(!confirm('Delete the current file?')) return;
     message.open('loading', {autohide: false});
     this.ajax();
   }
 
   ajax() {
-    let path = this.root + '/api/file/rename';
+    let path = this.root + '/api/file/delete';
     let data = {};
-    data.id = $('[data-sc-active]').dataset.scName;
-    data.filename = $('[data-path] input').value;
-
-    message.open('loading', {autohide: false});
+    let id = $('[data-sc-type="file"][data-sc-active]').dataset.scName;
+    data.id = id;
 
     fetch(path, {
       method: 'post',
@@ -45,6 +46,8 @@ class FileRename {
     .then((text) => {
       message.open(false, text);
 
+      console.log(text);
+
       let results = JSON.parse(text);
 
       if(!isJson(text)) {
@@ -53,8 +56,9 @@ class FileRename {
         if(!results.success) {
           message.open(false, results.message);
         } else {
-          staircase.rename(results.old_id, results.new_filename, 'file');
-          staircase.rename(results.old_revision, results.new_filename, 'folder');
+          //staircase.rename(results.old_id, results.new_filename, 'file');
+          //staircase.rename(results.old_revision, results.new_filename, 'folder');
+          staircase.delete(id, 'file');
           message.open();
         }
       }

@@ -1,4 +1,4 @@
-<?php $hide = option('bar.bottom', true) ? '' : 'data-hide'; ?>
+<?php $hide = option('bar.bottom') ? '' : 'data-hide'; ?>
 
 <div class="bottombar state" <?= $hide; ?>>
   <ul>

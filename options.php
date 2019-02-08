@@ -13,5 +13,8 @@ return [
     //'top' => false,
     //'bottom' => false
   ],
-  'autosave' => false
+  'autosave' => false,
+  'revisions' => [
+    'hide' => false
+  ]
 ];

@@ -16,6 +16,10 @@ function flattenOptions($array, $old = '') {
   return $result;
 }
 
+function contains($needle, $haystack) {
+  return strpos($haystack, $needle) !== false;
+}
+
 function spellcheck() {
   if(option('spellcheck') !== '') {
     $spellcheck_option = option('spellcheck') ? 'true' : 'false';

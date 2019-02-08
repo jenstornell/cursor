@@ -73,6 +73,8 @@ ms-box {
 
     ms-box-text {
       display: block;
+      word-break: break-word;
+      box-sizing: border-box;
     }
     ms-close-button {
       display: block;
