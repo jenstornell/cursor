@@ -9,7 +9,7 @@
   </ul>
   <ul>
     <li class="fullscreen">
-      <img src="<?= option('root.url'); ?>/assets/images/maximize.svg">
+      <img src="<?= option('root.url'); ?>/assets/images/remixicon/fullscreen-line.svg">
       <label>
         Fullscreen
       </label>

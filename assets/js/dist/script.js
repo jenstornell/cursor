@@ -125,110 +125,7 @@ class Render {
     $('.preview').innerHTML = marked($('textarea').value);
   }
 }
-class FolderRead {
-  constructor(params) {
-    this.render = params.render;
-    this.fileread = params.fileread;
-    this.root = params.root;
-    this.message = params.message;
-  }
-
-  get(id) {
-    let pending = typeof document.body.dataset.pending !== 'undefined' ? true : false;
-    if(pending) {
-      if(!confirm('The current file has not been saved. Load anyway?')) return;
-    }
-    message.open('loading', {autohide: false});
-    $('ms-box').dataset.autohide = '';
-    this.ajax(id);
-  }
-
-  ajax(id) {
-    let path = this.root + '/api/folder/read';
-    let data = {};
-    data.id = id;
-
-    fetch(path, {
-      method: 'post',
-      body: JSON.stringify(data),
-    })
-    .then((response) => {
-        return response.text();
-    })
-    .then((text) => {
-      if(!isJson(text)) {
-        message.open(false, text);
-      } else {
-        let results = JSON.parse(text);
-        if(!results.success) {
-          message.open(false, results.message);
-        } else {
-          $('body').dataset.state = 'browser';
-          $('.browser').innerHTML = results.html;
-          render.updateFilepath(id);
-          delete $('ms-box').dataset.open;
-          this.onClick();
-        }
-      }
-    });
-  }
-
-  onFolderClick() {
-    $$('.browser [data-folder]').forEach(el => {
-      el.dataset.scActive = '';
-      el.addEventListener('click', (e) => {
-        //console.log('click');
-        let id = e.currentTarget.dataset.id;
-        //console.log(id);
-        //console.log('hello');
-        staircase.open(id);
-        /*let tree_el = $('[data-sc-name="' + id + '"]');
-
-        $$('[data-sc-name]').forEach(el => {
-          delete el.dataset.scActive;
-        });
-
-        if(!tree_el) return;
-
-        this.openParent(tree_el);
-        */
-        this.get(id);
-
-        //tree_el.dataset.scActive = '';
-      });
-    });
-  }
-
-  onClick() {
-    $$('.browser [data-id]').forEach(el => {
-      el.dataset.scActive = '';
-      el.addEventListener('click', (e) => {
-        let type = el.dataset.type;
-        let id = e.currentTarget.dataset.id;
-
-        if(type == 'file') {
-          this.fileread.get(id);
-        } else {
-          this.get(id);
-          action = 'folder/read';
-          buffer_id = id;
-          staircase.open(id);
-        }
-      });
-    });
-  }
-
-  openParent(el) {
-    //console.log(el);
-    let closest = el.parentNode.closest('li');
-
-    if(!closest) return;
-    
-    closest.dataset.scState = 'open';
-    this.openParent(closest);
-  }
-}
-class FileDelete {
+class FileAdd {
   constructor(params) {
     this.root = params.root;
     this.options = params.options;
@@ -242,16 +139,63 @@ class FileDelete {
     this.onClick();
   }
 
-  /*if(e.code == 'Enter') {
-    e.target.blur();
-    this.rename();
-  }*/
-
   onClick() {
-    $('.filebar .delete').addEventListener('click', (e) => {
-      if(!$('[data-sc-type="file"][data-sc-active]')) return;
-      this.delete();
+    $('.filebar .add-file').addEventListener('click', (e) => {
+      this.add();
     });
+  }
+
+  add() {
+    message.open('loading', {autohide: false});
+    this.ajax();
+  }
+
+  ajax() {
+    let path = this.root + '/api/file/add';
+    let data = {};
+    let folder = $('[data-sc-type="folder"][data-sc-active]');
+    let id = '/';
+
+    if(folder) {
+      id = folder.dataset.scName;
+    } else {
+      let file = $('[data-sc-type="file"][data-sc-active]');
+      if(file) {
+        folder = file.closest('[data-sc-type="folder"]');
+        id = folder.dataset.scName;
+      }
+    }
+
+    data.id = id;
+
+    fetch(path, {
+      method: 'post',
+      body: JSON.stringify(data),
+    })
+    .then((response) => {
+        return response.text();
+    })
+    .then((text) => {
+      message.open(false, text);
+
+      let results = JSON.parse(text);
+      if(!isJson(text)) {
+        message.open(false, text);
+      } else {
+        if(!results.success) {
+          message.open(false, results.message);
+        } else {
+          staircase.add(id, results.filename, 'file');
+          message.open();
+        }
+      }
+    });
+  }
+}
+class FileDelete {
+  constructor(params) {
+    this.root = params.root;
+    this.options = params.options;
   }
 
   delete() {
@@ -276,7 +220,7 @@ class FileDelete {
     .then((text) => {
       message.open(false, text);
 
-      console.log(text);
+      console.log(path);
 
       let results = JSON.parse(text);
 
@@ -286,8 +230,6 @@ class FileDelete {
         if(!results.success) {
           message.open(false, results.message);
         } else {
-          //staircase.rename(results.old_id, results.new_filename, 'file');
-          //staircase.rename(results.old_revision, results.new_filename, 'folder');
           staircase.delete(id, 'file');
           message.open();
         }
@@ -392,7 +334,6 @@ class FileRename {
   }
 
   rename() {
-    if(!confirm('Rename the current file?')) return;
     message.open('loading', {autohide: false});
     this.ajax();
   }
@@ -518,6 +459,316 @@ class Save {
 
   allowed() {
     return typeof document.body.dataset.pending !== 'undefined';
+  }
+}
+class FileUpload {
+  constructor(params) {
+    this.root = params.root;
+    this.options = params.options;
+  }
+
+  init() {
+    this.events();
+    console.log('upload');
+  }
+
+  events() {
+    this.onClick();
+    this.onChange();
+  }
+
+  onClick() {
+    $('.filebar .upload-file').addEventListener('click', (e) => {
+      this.add();
+    });
+  }
+
+  onChange() {
+    $('#upload').addEventListener('change', (e) => {
+      this.ajax(e.target.files[0]);
+    });
+  }
+
+  add() {
+    $('#upload').click();
+  }
+
+  ajax(file) {
+    let path = this.root + '/api/file/upload';
+    let data = new FormData();
+
+    data.append('file', file);
+
+    let options = {
+      method: 'post',
+      body: data,
+    };
+
+    fetch(path, options)
+    .then((response) => {
+        return response.text();
+    })
+    .then((text) => {
+      message.open(false, text);
+      console.log(text);
+
+      /*let results = JSON.parse(text);
+      if(!isJson(text)) {
+        message.open(false, text);
+      } else {
+        if(!results.success) {
+          message.open(false, results.message);
+        } else {
+          staircase.add(id, results.filename, 'file');
+          message.open();
+        }
+      }*/
+    });
+  }
+}
+class FilefolderDelete {
+  constructor(params) {
+    this.root = params.root;
+    this.options = params.options;
+    this.filedelete = new FileDelete({
+      root: this.root,
+      options: this.options,
+    });
+    this.folderdelete = new FolderDelete({
+      root: this.root,
+      options: this.options,
+    });
+  }
+
+  init() {
+    this.events();
+  }
+
+  events() {
+    this.onClick();
+  }
+
+  onClick() {
+    $('.filebar .delete').addEventListener('click', (e) => {
+      if($('[data-sc-type="file"][data-sc-active]')) {
+        this.filedelete.delete();
+      } else {
+        this.folderdelete.delete();
+      }
+    });
+  }
+}
+class FolderAdd {
+  constructor(params) {
+    this.root = params.root;
+    this.options = params.options;
+  }
+
+  init() {
+    this.events();
+  }
+
+  events() {
+    this.onClick();
+  }
+
+  onClick() {
+    $('.filebar .add-folder').addEventListener('click', (e) => {
+      this.add();
+    });
+  }
+
+  add() {
+    message.open('loading', {autohide: false});
+    this.ajax();
+  }
+
+  ajax() {
+    let path = this.root + '/api/folder/add';
+    let data = {};
+    let folder = $('[data-sc-type="folder"][data-sc-active]');
+    let id = '/';
+    
+    if(folder) {
+      id = folder.dataset.scName;
+    } else {
+      let file = $('[data-sc-type="file"][data-sc-active]');
+      if(file) {
+        folder = file.closest('[data-sc-type="folder"]');
+        id = folder.dataset.scName;
+      }
+    }
+    
+    data.id = id;
+
+    fetch(path, {
+      method: 'post',
+      body: JSON.stringify(data),
+    })
+    .then((response) => {
+        return response.text();
+    })
+    .then((text) => {
+      message.open(false, text);
+
+      let results = JSON.parse(text);
+      if(!isJson(text)) {
+        message.open(false, text);
+      } else {
+        if(!results.success) {
+          message.open(false, results.message);
+        } else {
+          staircase.add(id, results.name, 'folder');
+          message.open();
+        }
+      }
+    });
+  }
+}
+class FolderDelete {
+  constructor(params) {
+    this.root = params.root;
+    this.options = params.options;
+  }
+  
+  delete() {
+    if(!confirm('Delete the current folder?')) return;
+    message.open('loading', {autohide: false});
+    this.ajax();
+  }
+
+  ajax() {
+    let path = this.root + '/api/folder/delete';
+    let data = {};
+    let id = $('[data-sc-type="folder"][data-sc-active]').dataset.scName;
+    data.id = id;
+
+    fetch(path, {
+      method: 'post',
+      body: JSON.stringify(data),
+    })
+    .then((response) => {
+        return response.text();
+    })
+    .then((text) => {
+      message.open(false, text);
+
+      let results = JSON.parse(text);
+
+      if(!isJson(text)) {
+        message.open(false, text);
+      } else {
+        if(!results.success) {
+          message.open(false, results.message);
+        } else {
+          staircase.delete(id, 'folder');
+          message.open();
+        }
+      }
+    });
+  }
+}
+class FolderRead {
+  constructor(params) {
+    this.render = params.render;
+    this.fileread = params.fileread;
+    this.root = params.root;
+    this.message = params.message;
+  }
+
+  get(id) {
+    let pending = typeof document.body.dataset.pending !== 'undefined' ? true : false;
+    if(pending) {
+      if(!confirm('The current file has not been saved. Load anyway?')) return;
+    }
+    message.open('loading', {autohide: false});
+    $('ms-box').dataset.autohide = '';
+    this.ajax(id);
+  }
+
+  ajax(id) {
+    let path = this.root + '/api/folder/read';
+    let data = {};
+    data.id = id;
+
+    fetch(path, {
+      method: 'post',
+      body: JSON.stringify(data),
+    })
+    .then((response) => {
+        return response.text();
+    })
+    .then((text) => {
+      if(!isJson(text)) {
+        message.open(false, text);
+      } else {
+        let results = JSON.parse(text);
+        if(!results.success) {
+          message.open(false, results.message);
+        } else {
+          $('body').dataset.state = 'browser';
+          $('.browser').innerHTML = results.html;
+          render.updateFilepath(id);
+          delete $('ms-box').dataset.open;
+          this.onClick();
+        }
+      }
+    });
+  }
+
+  onFolderClick() {
+    $$('.browser [data-folder]').forEach(el => {
+      el.dataset.scActive = '';
+      el.addEventListener('click', (e) => {
+        //console.log('click');
+        let id = e.currentTarget.dataset.id;
+        //console.log(id);
+        //console.log('hello');
+        staircase.open(id);
+        /*let tree_el = $('[data-sc-name="' + id + '"]');
+
+        $$('[data-sc-name]').forEach(el => {
+          delete el.dataset.scActive;
+        });
+
+        if(!tree_el) return;
+
+        this.openParent(tree_el);
+        */
+        this.get(id);
+
+        //tree_el.dataset.scActive = '';
+      });
+    });
+  }
+
+  onClick() {
+    $$('.browser [data-id]').forEach(el => {
+      el.dataset.scActive = '';
+      el.addEventListener('click', (e) => {
+        let type = el.dataset.type;
+        let id = e.currentTarget.dataset.id;
+
+        if(type == 'file') {
+          this.fileread.get(id);
+        } else {
+          this.get(id);
+          action = 'folder/read';
+          buffer_id = id;
+          staircase.open(id);
+        }
+      });
+    });
+  }
+
+  openParent(el) {
+    //console.log(el);
+    let closest = el.parentNode.closest('li');
+
+    if(!closest) return;
+    
+    closest.dataset.scState = 'open';
+    this.openParent(closest);
   }
 }
 /**

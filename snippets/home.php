@@ -80,15 +80,39 @@ $json = json_encode(option());
     options: options,
   });
 
-  let filedelete = new FileDelete({
+  /*let filedelete = new FileDelete({
     render: render,
     root: '<?= option('root.url'); ?>',
-    //options: options,
+  });*/
+
+  let fileadd = new FileAdd({
+    render: render,
+    root: '<?= option('root.url'); ?>',
+  });
+
+  let folderadd = new FolderAdd({
+    render: render,
+    root: '<?= option('root.url'); ?>',
+  });
+
+  let filefolder_delete = new FilefolderDelete({
+    render: render,
+    root: '<?= option('root.url'); ?>',
+  });
+
+  let fileupload = new FileUpload({
+    render: render,
+    root: '<?= option('root.url'); ?>',
   });
 
   save.init();
   filerename.init();
-  filedelete.init();
+  //filedelete.init();
+  fileadd.init();
+  fileupload.init();
+
+  folderadd.init();
+  filefolder_delete.init();
 
   document.addEventListener("DOMContentLoaded", (event) => {
     fullscreen.init();

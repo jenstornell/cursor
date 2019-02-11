@@ -105,7 +105,9 @@ ms-box {
   background: #000;
   position: fixed;
   top: 1rem;
+  top: 5rem;
   right: 1rem;
+  right: 2.5rem;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 14px;
   margin-left: 1rem;
@@ -244,7 +246,38 @@ aside {
   overflow-y: auto;
   flex-direction: column;
   border-top-left-radius: .5rem;
-  border-bottom-left-radius: .5rem; }
+  border-bottom-left-radius: .5rem;
+  /*.add-file {
+    &:after {
+      content: '+';
+      position: absolute;
+      height: 18px;
+      width: 100%;
+      left: 0;
+      text-align: center;
+      line-height: 1;
+      margin-top: 3px;
+      font-weight: bold;
+      font-family: roboto;
+      font-size: 16px;
+    }
+  }*/
+  /*.add-folder {
+    &:after {
+      content: '+';
+      color: #fff;
+      position: absolute;
+      height: 18px;
+      width: 100%;
+      left: 0;
+      text-align: center;
+      line-height: 1;
+      margin-top: 2px;
+      font-weight: bold;
+      font-family: roboto;
+      font-size: 16px;
+    }
+  }*/ }
   aside .filebar {
     background: #ddd;
     display: flex;
@@ -266,41 +299,20 @@ aside {
         display: flex;
         align-items: center;
         position: relative;
-        border-radius: .2rem; }
-        aside .filebar ul li.add-file img {
-          height: 21px; }
+        border-radius: .2rem;
+        /*&.add-file img {
+          height: 21px;
+        }*/ }
         aside .filebar ul li:hover {
           background: #eee; }
         aside .filebar ul li img {
-          width: 28px;
+          width: 24px;
           height: 24px; }
-  aside .add-file:after {
-    content: '+';
-    position: absolute;
-    height: 18px;
-    width: 100%;
-    left: 0;
-    text-align: center;
-    line-height: 1;
-    margin-top: 3px;
-    font-weight: bold;
-    font-family: roboto;
-    font-size: 16px; }
-  aside .add-folder:after {
-    content: '+';
-    color: #fff;
-    position: absolute;
-    height: 18px;
-    width: 100%;
-    left: 0;
-    text-align: center;
-    line-height: 1;
-    margin-top: 2px;
-    font-weight: bold;
-    font-family: roboto;
-    font-size: 16px; }
   aside.scrollbar::-webkit-scrollbar-thumb {
     border-color: #eee; }
+
+#upload {
+  display: none; }
 
 html,
 body {
@@ -334,8 +346,10 @@ main {
   width: 1rem;
   background: #ffc107;
   top: 3.5rem;
-  position: fixed;
+  top: 5rem;
   right: 1rem;
+  right: 2.5rem;
+  position: fixed;
   border-radius: 100vh; }
 
 @-webkit-keyframes rotation {
@@ -379,7 +393,7 @@ stair-case {
         border-radius: .2rem; }
       stair-case ul li .sc-icon {
         padding: 0 .2rem;
-        background-size: 16px 18px;
+        background-size: 18px;
         background-position: center;
         background-repeat: no-repeat;
         min-width: 24px;
@@ -394,19 +408,19 @@ stair-case {
         stair-case ul li .sc-name:hover {
           background-color: #ddd; }
       stair-case ul li[data-sc-type="folder"] > .sc-current > .sc-icon {
-        background-image: url("../../images/folder-solid.svg"); }
+        background-image: url("../../images/remixicon/18/folder-fill.svg"); }
         stair-case ul li[data-sc-type="folder"] > .sc-current > .sc-icon:hover {
           background-color: #ddd; }
       stair-case ul li[data-sc-type="folder"][data-sc-state="open"] > .sc-current > .sc-icon {
-        background-image: url("../../images/folder-open-solid.svg"); }
+        background-image: url("../../images/remixicon/18/folder-open.svg"); }
       stair-case ul li[data-sc-type="folder"].sc-loading > .sc-current > .sc-icon {
-        background-image: url("../../images/sync-solid.svg");
+        background-image: url("../../images/remixicon/refresh-line.svg");
         -webkit-animation: rotation 2s infinite linear;
                 animation: rotation 2s infinite linear; }
         stair-case ul li[data-sc-type="folder"].sc-loading > .sc-current > .sc-icon:hover {
           background-color: transparent; }
       stair-case ul li[data-sc-type="file"] .sc-icon {
-        background-image: url("../../images/file-regular.svg"); }
+        background-image: url("../../images/remixicon/18/file-text.svg"); }
   stair-case > ul {
     margin-left: 0; }
 
@@ -471,11 +485,12 @@ stair-case {
     display: flex;
     flex: 1;
     padding-right: 1rem;
-    color: #aaa; }
+    color: #aaa;
+    word-break: break-all; }
     .topbar .path input {
       font-family: roboto;
       font-size: .9rem;
-      width: 100%;
+      flex: 1;
       background: transparent;
       border: none;
       outline: none; }
@@ -493,9 +508,11 @@ stair-case {
         -ms-user-select: none;
             user-select: none; }
     .topbar .fullscreen:hover {
-      background: #cde4fe; }
+      background: #fafafa; }
     .topbar .fullscreen img {
-      padding-right: .5rem; }
+      padding-right: .5rem;
+      width: 24px;
+      height: 24px; }
     .topbar .fullscreen label {
       font-family: roboto;
       font-size: .9rem; }

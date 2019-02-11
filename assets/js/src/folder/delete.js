@@ -1,38 +1,20 @@
-class FileRename {
+class FolderDelete {
   constructor(params) {
     this.root = params.root;
     this.options = params.options;
   }
-
-  init() {
-    this.events();
-  }
-
-  events() {
-    this.onChange();
-  }
-
-  onChange() {
-    $('.topbar .path input').addEventListener('keyup', (e) => {
-      if(e.code == 'Enter') {
-        e.target.blur();
-        this.rename();
-      }
-    });
-  }
-
-  rename() {
+  
+  delete() {
+    if(!confirm('Delete the current folder?')) return;
     message.open('loading', {autohide: false});
     this.ajax();
   }
 
   ajax() {
-    let path = this.root + '/api/file/rename';
+    let path = this.root + '/api/folder/delete';
     let data = {};
-    data.id = $('[data-sc-active]').dataset.scName;
-    data.filename = $('[data-path] input').value;
-
-    message.open('loading', {autohide: false});
+    let id = $('[data-sc-type="folder"][data-sc-active]').dataset.scName;
+    data.id = id;
 
     fetch(path, {
       method: 'post',
@@ -52,8 +34,7 @@ class FileRename {
         if(!results.success) {
           message.open(false, results.message);
         } else {
-          staircase.rename(results.old_id, results.new_filename, 'file');
-          staircase.rename(results.old_revision, results.new_filename, 'folder');
+          staircase.delete(id, 'folder');
           message.open();
         }
       }

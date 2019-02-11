@@ -14,7 +14,7 @@ $counter = 0;
   ?>
     <li data-type="folder" data-id="<?= $part; ?>" title="<?= basename($path); ?>">
       <figure>
-        <img src="<?= option('root.url'); ?>/assets/images/folder-solid.svg">
+        <img src="<?= option('root.url'); ?>/assets/images/remixicon/folder-fill.svg">
       </figure>
       <div class="filename"><?= basename($path); ?></div>
     </li>
@@ -33,7 +33,7 @@ $counter = 0;
         <?php if(in_array($extension, filetypes::image())) : ?>
           <img src="<?= option('root.url'); ?>/api/image/<?= $part; ?>">
         <?php else : ?>
-          <img src="<?= option('root.url'); ?>/assets/images/file-regular.svg">
+          <img src="<?= option('root.url'); ?>/assets/images/remixicon/file-text-line.svg">
         <?php endif; ?>
       </figure>
       <div class="filename"><?= basename($path); ?></div>

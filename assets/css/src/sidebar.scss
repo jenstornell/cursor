@@ -30,23 +30,23 @@ aside {
         position: relative;
         border-radius: .2rem;
 
-        &.add-file img {
+        /*&.add-file img {
           height: 21px;
-        }
+        }*/
 
         &:hover {
           background: #eee;
         }
 
         img {
-          width: 28px;
+          width: 24px;
           height: 24px;
         }
       }
     }
   }
 
-  .add-file {
+  /*.add-file {
     &:after {
       content: '+';
       position: absolute;
@@ -60,9 +60,9 @@ aside {
       font-family: roboto;
       font-size: 16px;
     }
-  }
+  }*/
 
-  .add-folder {
+  /*.add-folder {
     &:after {
       content: '+';
       color: #fff;
@@ -77,9 +77,13 @@ aside {
       font-family: roboto;
       font-size: 16px;
     }
-  }
+  }*/
 
   &.scrollbar::-webkit-scrollbar-thumb {
     border-color: #eee;
   }
+}
+
+#upload {
+  display: none;
 }

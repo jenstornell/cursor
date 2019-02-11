@@ -27,11 +27,12 @@
     flex: 1;
     padding-right: 1rem;
     color: #aaa;
+    word-break: break-all;
 
     input {
       font-family: roboto;
       font-size: .9rem;
-      width: 100%;
+      flex: 1;
       background: transparent;
       border: none;
       outline: none;
@@ -54,11 +55,13 @@
     user-select: none;
 
     &:hover {
-      background: #cde4fe;
+      background: #fafafa;
     }
 
     img {
       padding-right: .5rem;
+      width: 24px;
+      height: 24px;
     }
 
     label {

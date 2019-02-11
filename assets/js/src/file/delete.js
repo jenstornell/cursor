@@ -4,26 +4,6 @@ class FileDelete {
     this.options = params.options;
   }
 
-  init() {
-    this.events();
-  }
-
-  events() {
-    this.onClick();
-  }
-
-  /*if(e.code == 'Enter') {
-    e.target.blur();
-    this.rename();
-  }*/
-
-  onClick() {
-    $('.filebar .delete').addEventListener('click', (e) => {
-      if(!$('[data-sc-type="file"][data-sc-active]')) return;
-      this.delete();
-    });
-  }
-
   delete() {
     if(!confirm('Delete the current file?')) return;
     message.open('loading', {autohide: false});
@@ -46,7 +26,7 @@ class FileDelete {
     .then((text) => {
       message.open(false, text);
 
-      console.log(text);
+      console.log(path);
 
       let results = JSON.parse(text);
 
@@ -56,8 +36,6 @@ class FileDelete {
         if(!results.success) {
           message.open(false, results.message);
         } else {
-          //staircase.rename(results.old_id, results.new_filename, 'file');
-          //staircase.rename(results.old_revision, results.new_filename, 'folder');
           staircase.delete(id, 'file');
           message.open();
         }

@@ -1,4 +1,4 @@
-class FileRename {
+class FolderAdd {
   constructor(params) {
     this.root = params.root;
     this.options = params.options;
@@ -9,30 +9,37 @@ class FileRename {
   }
 
   events() {
-    this.onChange();
+    this.onClick();
   }
 
-  onChange() {
-    $('.topbar .path input').addEventListener('keyup', (e) => {
-      if(e.code == 'Enter') {
-        e.target.blur();
-        this.rename();
-      }
+  onClick() {
+    $('.filebar .add-folder').addEventListener('click', (e) => {
+      this.add();
     });
   }
 
-  rename() {
+  add() {
     message.open('loading', {autohide: false});
     this.ajax();
   }
 
   ajax() {
-    let path = this.root + '/api/file/rename';
+    let path = this.root + '/api/folder/add';
     let data = {};
-    data.id = $('[data-sc-active]').dataset.scName;
-    data.filename = $('[data-path] input').value;
-
-    message.open('loading', {autohide: false});
+    let folder = $('[data-sc-type="folder"][data-sc-active]');
+    let id = '/';
+    
+    if(folder) {
+      id = folder.dataset.scName;
+    } else {
+      let file = $('[data-sc-type="file"][data-sc-active]');
+      if(file) {
+        folder = file.closest('[data-sc-type="folder"]');
+        id = folder.dataset.scName;
+      }
+    }
+    
+    data.id = id;
 
     fetch(path, {
       method: 'post',
@@ -45,15 +52,13 @@ class FileRename {
       message.open(false, text);
 
       let results = JSON.parse(text);
-
       if(!isJson(text)) {
         message.open(false, text);
       } else {
         if(!results.success) {
           message.open(false, results.message);
         } else {
-          staircase.rename(results.old_id, results.new_filename, 'file');
-          staircase.rename(results.old_revision, results.new_filename, 'folder');
+          staircase.add(id, results.name, 'folder');
           message.open();
         }
       }
