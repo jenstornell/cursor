@@ -13,7 +13,7 @@ return [
     //'top' => false,
     //'bottom' => false
   ],
-  'autosave' => false,
+  'autosave' => 50,
   'revisions' => [
     'hide' => false
   ]

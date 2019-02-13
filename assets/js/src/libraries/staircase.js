@@ -14,9 +14,9 @@ class staircase {
     staircase.rename(id, name, type);
   }
 
-  static select(id, type) {
+  static select(id, type, callback = true) {
     let staircase = new StaircaseCore();
-    staircase.select(id, type);
+    staircase.select(id, type, callback);
   }
 
   static deselect(id, type) {
@@ -37,6 +37,11 @@ class staircase {
   static refresh(id) {
     let staircase = new StaircaseCore();
     staircase.refresh(id);
+  }
+
+  static removeActive() {
+    let staircase = new StaircaseCore();
+    staircase.removeActive();
   }
 }
 class StaircaseCore {
@@ -78,6 +83,8 @@ class StaircaseCore {
     json = JSON.stringify(data);
     
     let current = this.item(id, 'folder');
+
+    console.log(current);
 
     if(current.dataset.scChildren !== undefined) {
       this.state(current, 'open');
@@ -168,18 +175,22 @@ class StaircaseCore {
   refresh(id) {
     this.options();
     let li = this.item(id, 'folder');
-    let children = this.$('[data-sc-children]', li);
-    if(!children) return;
+    if(!li) return;
 
-    children.remove();
-    delete li.dataset.scState;
-    delete li.dataset.scChildren;
-    this.open(id);
+    li.remove();
+
+    this.add('revisions', 'untitled-1550064687.md', 'folder');
+    this.open('revisions/untitled-1550064687.md');
   }
 
   add(base, name, type) {
     this.options();
     let ul = this.$('[data-sc-name="' + base + '"] > [data-sc-children]');
+    if(!ul) return;
+
+    let id = this.trimSlashes(base + '/' + name);
+    if(this.item(id, type)) return;
+
     let li = this.append(base, name, type);
     let el_name = this.$('.sc-name', li);
     let el_icon = this.$('.sc-icon', li);
@@ -193,7 +204,8 @@ class StaircaseCore {
 
   delete(id, type) {
     this.options();
-    let li = this.item(id, type)
+    let li = this.item(id, type);
+    if(!li) return;
     li.remove();
   }
 
@@ -227,7 +239,7 @@ class StaircaseCore {
     this.ajax(full_ids);
   }
 
-  select(id, type) {
+  select(id, type, callback) {
     this.options();
     let el = this.item(id, type);
     let data = this.setData(el);
@@ -235,6 +247,7 @@ class StaircaseCore {
     this.removeActive();
     this.setActive(el);
 
+    if(!callback) return;
     this.callback('select', data);
   }
 
@@ -247,7 +260,7 @@ class StaircaseCore {
   item(id, type) {
     let selector = '';
     if(id === '/') {
-      selector = this.o.selector + '[data-sc-name="' + id + '"]';
+      selector = this.o.selector + '[data-sc-name="/"]';
     } else {
       selector = this.o.selector + ' [data-sc-name="' + id + '"][data-sc-type="' + type + '"]';
     }
@@ -462,6 +475,7 @@ class StaircaseCore {
 
   // Remove active
   removeActive() {
+    this.options();
     let elements = this.$$(this.o.selector + ' li');
 
     elements.forEach(function(element) {

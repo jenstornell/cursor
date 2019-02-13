@@ -4,23 +4,6 @@ class FileRename {
     this.options = params.options;
   }
 
-  init() {
-    this.events();
-  }
-
-  events() {
-    this.onChange();
-  }
-
-  onChange() {
-    $('.topbar .path input').addEventListener('keyup', (e) => {
-      if(e.code == 'Enter') {
-        e.target.blur();
-        this.rename();
-      }
-    });
-  }
-
   rename() {
     message.open('loading', {autohide: false});
     this.ajax();

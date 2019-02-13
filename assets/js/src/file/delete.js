@@ -5,8 +5,9 @@ class FileDelete {
   }
 
   delete() {
-    if(!confirm('Delete the current file?')) return;
+    if(!confirm('Delete the current file and the current file revisions?')) return;
     message.open('loading', {autohide: false});
+    $('ms-box').dataset.autohide = '';
     this.ajax();
   }
 
@@ -24,20 +25,19 @@ class FileDelete {
         return response.text();
     })
     .then((text) => {
-      message.open(false, text);
-
-      console.log(path);
-
-      let results = JSON.parse(text);
-
       if(!isJson(text)) {
         message.open(false, text);
       } else {
+        let results = JSON.parse(text);
         if(!results.success) {
           message.open(false, results.message);
         } else {
           staircase.delete(id, 'file');
-          message.open();
+          staircase.delete(results.revisions_id, 'folder');
+
+          console.log(results.revisions_id);
+          delete $('ms-box').dataset.open;
+          delete $('body').dataset.pending;
         }
       }
     });

@@ -47,12 +47,14 @@ function humanFilesize($bytes, $decimals = 2) {
 }
 
 function post() {
-  return json_decode(file_get_contents('php://input'), true);
+  $content = file_get_contents('php://input');
+  if(empty($content)) return;
+  return json_decode($content, true);
 }
 
 class filetypes {
   public static function markdown() {
-    return option('filetypes.markdown', ['markdown', 'mdown', 'mkdn', 'md', 'mkd', 'mdwn', 'mdtxt', 'mdtext', 'text', 'rmd', 'txt']);
+    return option('filetypes.markdown', ['markdown', 'mdown', 'mkdn', 'md', 'mkd', 'mdwn', 'mdtxt', 'mdtext', 'text', 'rmd', 'txt', '']);
   }
 
   public static function image() {

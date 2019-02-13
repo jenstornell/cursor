@@ -4,8 +4,6 @@ class Save {
     this.root = params.root;
     this.options = params.options;
     this.time = this.time();
-
-    //console.log(this.time);
   }
 
   init() {
@@ -16,7 +14,8 @@ class Save {
   ajax() {
     let path = this.root + '/api/file/save';
     let data = {};
-    data.id = $('[data-sc-active]').dataset.scName;
+    let id = $('[data-sc-active]').dataset.scName;
+    data.id = id;
     data.text = $('.editor textarea').value;
 
     fetch(path, {
@@ -37,6 +36,12 @@ class Save {
           latest = $('.editor textarea').value;
           this.render.updatePending();
           this.render.updateTimestamp(results.timestamp);
+
+          let revisions_id = options['revisions.folder'] + '/' + id;
+
+          console.log(revisions_id);
+
+          staircase.refresh(revisions_id);
           message.open();
           this.resetTimeout();
           this.startTimeout();

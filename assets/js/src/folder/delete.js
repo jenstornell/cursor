@@ -7,6 +7,7 @@ class FolderDelete {
   delete() {
     if(!confirm('Delete the current folder?')) return;
     message.open('loading', {autohide: false});
+    $('ms-box').dataset.autohide = '';
     this.ajax();
   }
 
@@ -24,8 +25,6 @@ class FolderDelete {
         return response.text();
     })
     .then((text) => {
-      message.open(false, text);
-
       let results = JSON.parse(text);
 
       if(!isJson(text)) {
@@ -35,7 +34,7 @@ class FolderDelete {
           message.open(false, results.message);
         } else {
           staircase.delete(id, 'folder');
-          message.open();
+          delete $('ms-box').dataset.open;
         }
       }
     });

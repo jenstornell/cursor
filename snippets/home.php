@@ -56,6 +56,7 @@ $json = json_encode(option());
   var latest = '';
   var action = '';
   var buffer_id = '';
+  var buffer_type = '';
 
   let options = <?= $json; ?>;
   let fullscreen = new Fullscreen();
@@ -74,16 +75,11 @@ $json = json_encode(option());
     fileread, fileread,
     root: '<?= option('root.url'); ?>',
   });
-  let filerename = new FileRename({
+  let filefolder_rename = new FilefolderRename({
     render: render,
     root: '<?= option('root.url'); ?>',
     options: options,
   });
-
-  /*let filedelete = new FileDelete({
-    render: render,
-    root: '<?= option('root.url'); ?>',
-  });*/
 
   let fileadd = new FileAdd({
     render: render,
@@ -106,8 +102,7 @@ $json = json_encode(option());
   });
 
   save.init();
-  filerename.init();
-  //filedelete.init();
+  filefolder_rename.init();
   fileadd.init();
   fileupload.init();
 
@@ -120,18 +115,13 @@ $json = json_encode(option());
 
   class StaircaseCallbacks {
     load(params) {
-      //console.log(params);
-      console.log('test');
     }
     toggle(params) {
       if(action === 'folder/read' && params.id === buffer_id) {
-        console.log(buffer_id);
         staircase.select(buffer_id, 'folder');
       }
-      //console.log(params);
     }
     select(args) {
-      //console.log(args);
       if(args.type == 'file') {
         fileread.get(args.id);
       } else if(args.type == 'folder') {

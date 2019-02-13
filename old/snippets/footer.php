@@ -24,7 +24,6 @@ var hash = '#!';
 var router = new Navigo(root, useHash, hash);
 
 var type = window.location.hash.substr(3);
-console.log(type);
 
 router
   .on(function() {
@@ -37,9 +36,7 @@ router
   }).
   on({
     '*': function(params) {
-      console.log(params.path);
       //setContent('Products');
-      console.log('test');
 
       json = JSON.stringify({
         'type': 'list',

@@ -9,7 +9,13 @@ class FolderRead {
   get(id) {
     let pending = typeof document.body.dataset.pending !== 'undefined' ? true : false;
     if(pending) {
-      if(!confirm('The current file has not been saved. Load anyway?')) return;
+      if(!confirm('The current file has not been saved. Load anyway?')) {
+        if(buffer_id === '') return;
+
+        staircase.removeActive();
+        staircase.select(buffer_id, buffer_type, false);
+        return;
+      }
     }
     message.open('loading', {autohide: false});
     $('ms-box').dataset.autohide = '';
@@ -39,6 +45,9 @@ class FolderRead {
           $('body').dataset.state = 'browser';
           $('.browser').innerHTML = results.html;
           render.updateFilepath(id);
+          buffer_id = id;
+          buffer_type = 'folder';
+          delete $('body').dataset.pending;
           delete $('ms-box').dataset.open;
           this.onClick();
         }
@@ -50,24 +59,9 @@ class FolderRead {
     $$('.browser [data-folder]').forEach(el => {
       el.dataset.scActive = '';
       el.addEventListener('click', (e) => {
-        //console.log('click');
         let id = e.currentTarget.dataset.id;
-        //console.log(id);
-        //console.log('hello');
         staircase.open(id);
-        /*let tree_el = $('[data-sc-name="' + id + '"]');
-
-        $$('[data-sc-name]').forEach(el => {
-          delete el.dataset.scActive;
-        });
-
-        if(!tree_el) return;
-
-        this.openParent(tree_el);
-        */
         this.get(id);
-
-        //tree_el.dataset.scActive = '';
       });
     });
   }
@@ -92,7 +86,6 @@ class FolderRead {
   }
 
   openParent(el) {
-    //console.log(el);
     let closest = el.parentNode.closest('li');
 
     if(!closest) return;

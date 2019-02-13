@@ -1,5 +1,4 @@
 aside {
-  display: flex;
   background: #eee;
   width: 300px;
   border-right: 1px solid #ccc;
@@ -30,10 +29,6 @@ aside {
         position: relative;
         border-radius: .2rem;
 
-        /*&.add-file img {
-          height: 21px;
-        }*/
-
         &:hover {
           background: #eee;
         }
@@ -45,39 +40,6 @@ aside {
       }
     }
   }
-
-  /*.add-file {
-    &:after {
-      content: '+';
-      position: absolute;
-      height: 18px;
-      width: 100%;
-      left: 0;
-      text-align: center;
-      line-height: 1;
-      margin-top: 3px;
-      font-weight: bold;
-      font-family: roboto;
-      font-size: 16px;
-    }
-  }*/
-
-  /*.add-folder {
-    &:after {
-      content: '+';
-      color: #fff;
-      position: absolute;
-      height: 18px;
-      width: 100%;
-      left: 0;
-      text-align: center;
-      line-height: 1;
-      margin-top: 2px;
-      font-weight: bold;
-      font-family: roboto;
-      font-size: 16px;
-    }
-  }*/
 
   &.scrollbar::-webkit-scrollbar-thumb {
     border-color: #eee;

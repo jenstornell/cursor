@@ -1,32 +1,31 @@
 <?php
 class FileUpload {
-  function __construct() {
-    
+  function __construct($id, $overwrite) {
+    $this->file = $_FILES['file'];
+    $this->id = $id;
+    $this->overwrite = $overwrite;
+    $this->path = trim(option('project.path') . '/' . $id, '/') . '/' . $this->file['name'];
   }
 
   function upload() {
-    /*if(file_exists($this->filepath)) {
-      $this->json['message'] = 'Error! The file already exists!';
+    if(file_exists($this->path) && !$this->overwrite) {
+      $this->json['message'] = 'Error! Image already exists.';
       $this->output(false);
-    } elseif(file_put_contents($this->filepath, '') === false) {
-      $this->json['message'] = 'Error! The file could not be created!';
+    } elseif($this->file['error'] !== 0) {
+      $this->json['message'] = 'Error! Image could not be uploaded. ' . $this->file['error'];
       $this->output(false);
+    } else {
+      $content = file_get_contents($this->file['tmp_name']);
+      if(!$content) {
+        $this->json['message'] = 'Error! Image is not readable.';
+        $this->output(false);
+      } elseif(!file_put_contents($this->path, $content)) {
+        $this->json['message'] = 'Error! Image could not be written.';
+        $this->output(false);
+      }
     }
 
-    $this->json['filename'] = $this->filename;
-    $this->output(true);*/
-    //if
-    /*
-    if(!is_writable($this->filepath)) {
-      $this->json['message'] = 'Error! The file is not writable!';
-      $this->output(false);
-    }
-    if(!unlink($this->filepath)) {
-      $this->json['message'] = 'Error! The file could not be deleted!';
-      $this->output(false);
-    }
     $this->output(true);
-    */
     die;
   }
 

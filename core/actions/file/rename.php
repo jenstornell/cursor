@@ -15,7 +15,7 @@ class FileRename {
     $this->revisions = dirname(option('project.path') . '/' . $old_id) . '/' . option('revisions.folder');
     $this->new_revision = $this->revisions . '/' . $new_filename;
     $this->old_revision = $this->revisions . '/' . $this->old_filename;
-    $this->extension = pathinfo($this->old_filepath, PATHINFO_EXTENSION);
+    $this->new_extension = pathinfo($this->new_path, PATHINFO_EXTENSION);
   }
 
   function rename() {
@@ -57,12 +57,16 @@ class FileRename {
   }
 
   function onDisallowedFiletype() {
-    $is_markdown = in_array($this->extension, filetypes::markdown());
-    $is_image = in_array($this->extension, filetypes::image());
+    $is_markdown = in_array($this->new_extension, filetypes::markdown());
+    $is_image = in_array($this->new_extension, filetypes::image());
+
+    /*echo $this->extension;
+    echo $is_markdown . "#";
+    echo $is_image;*/
 
     if($is_markdown || $is_image) return;
 
-    $this->json['message'] = 'This filetype is not allowed!';
+    $this->json['message'] = "Error! You can't rename the file to this filetype!";
     $this->output(false);
   }
 

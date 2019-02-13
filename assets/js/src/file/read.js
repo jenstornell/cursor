@@ -8,9 +8,16 @@ class FileRead {
   get(id) {
     let pending = typeof document.body.dataset.pending !== 'undefined' ? true : false;
     if(pending) {
-      if(!confirm('The current file has not been saved. Load anyway?')) return;
+      if(!confirm('The current file has not been saved. Load anyway?')) {
+        if(buffer_id === '') return;
+
+        staircase.removeActive();
+        staircase.select(buffer_id, buffer_type, false);
+        return;
+      }
     }
     message.open('loading', {autohide: false});
+    $('ms-box').dataset.autohide = '';
     this.ajax(id);
   }
 
@@ -33,10 +40,15 @@ class FileRead {
         let results = JSON.parse(text);
         if(!results.success) {
           message.open(false, results.message);
-        } else if(results.type == 'md') {
-          this.toMarkdown(id, results);
-        } else if(results.type == 'image') {
-          this.toImage(id, results);
+        } else {
+          buffer_id = id;
+          buffer_type = 'file';
+
+          if(results.type == 'md') {
+            this.toMarkdown(id, results);
+          } else if(results.type == 'image') {
+            this.toImage(id, results);
+          }
         }
       }
     });

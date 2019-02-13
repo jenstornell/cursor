@@ -3,6 +3,8 @@
   display: flex;
   flex: 1;
   padding: 4rem;
+  height: 100%;
+  overflow-y: auto;
 
   h1 {
     padding: 4rem;

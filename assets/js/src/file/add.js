@@ -19,8 +19,23 @@ class FileAdd {
   }
 
   add() {
+    let pending = typeof document.body.dataset.pending !== 'undefined' ? true : false;
+    if(pending) {
+      if(!confirm('The current file has not been saved. Load anyway?')) {
+        if(buffer_id === '') return;
+
+        staircase.removeActive();
+        staircase.select(buffer_id, buffer_type, false);
+        return;
+      }
+    }
     message.open('loading', {autohide: false});
+    $('ms-box').dataset.autohide = '';
     this.ajax();
+  }
+
+  newId(id, filename) {
+    return (id == '/') ? filename : id + '/' + filename;
   }
 
   ajax() {
@@ -35,7 +50,9 @@ class FileAdd {
       let file = $('[data-sc-type="file"][data-sc-active]');
       if(file) {
         folder = file.closest('[data-sc-type="folder"]');
-        id = folder.dataset.scName;
+        if(folder) {
+          id = folder.dataset.scName;
+        }
       }
     }
 
@@ -49,8 +66,6 @@ class FileAdd {
         return response.text();
     })
     .then((text) => {
-      message.open(false, text);
-
       let results = JSON.parse(text);
       if(!isJson(text)) {
         message.open(false, text);
@@ -58,8 +73,13 @@ class FileAdd {
         if(!results.success) {
           message.open(false, results.message);
         } else {
+          if(id !== '/') {
+            staircase.open(id);
+          }
+          
           staircase.add(id, results.filename, 'file');
-          message.open();
+          delete $('body').dataset.pending;
+          delete $('ms-box').dataset.open;
         }
       }
     });

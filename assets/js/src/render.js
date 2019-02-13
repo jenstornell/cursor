@@ -12,7 +12,22 @@ class Render {
 
   events() {
     this.onKeyUp();
+    //this.onOutsideSelected();
   }
+
+  /*onOutsideSelected() {
+    document.addEventListener('click', (e) => {
+      if(e.target.classList.contains('sc-name')) return;
+
+      let li = $('[data-sc-active]');
+
+      if(!li) return;
+
+      let type = li.dataset.scType;
+      let id = li.dataset.scName;
+      staircase.deselect(id, type);
+    });
+  }*/
 
   onKeyUp() {
     $('textarea').addEventListener('keyup', (e) => {

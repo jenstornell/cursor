@@ -6,7 +6,6 @@ class FileUpload {
 
   init() {
     this.events();
-    console.log('upload');
   }
 
   events() {
@@ -16,17 +15,19 @@ class FileUpload {
 
   onClick() {
     $('.filebar .upload-file').addEventListener('click', (e) => {
-      this.add();
+      this.upload();
     });
   }
 
   onChange() {
     $('#upload').addEventListener('change', (e) => {
+      message.open('loading', {autohide: false});
+      $('ms-box').dataset.autohide = '';
       this.ajax(e.target.files[0]);
     });
   }
 
-  add() {
+  upload() {
     $('#upload').click();
   }
 
@@ -34,7 +35,38 @@ class FileUpload {
     let path = this.root + '/api/file/upload';
     let data = new FormData();
 
-    data.append('file', file);
+    let folder = $('[data-sc-type="folder"][data-sc-active]');
+    let id = '/';
+
+    if(folder) {
+      id = folder.dataset.scName;
+    } else {
+      let file = $('[data-sc-type="file"][data-sc-active]');
+      if(file) {
+        folder = file.closest('[data-sc-type="folder"]');
+        if(folder) {
+          id = folder.dataset.scName;
+        }
+      }
+    }
+
+    let match = '';
+    let overwrite = false;
+
+    if(id !== '/') {
+      match = $('[data-sc-type="file"][data-sc-name="' + id + '/' + file.name + '"]');
+    } else {
+      match = $('[data-sc-type="file"][data-sc-name="' + file.name + '"]');
+    }
+
+    if(match) {
+      overwrite = confirm('The file already exists. Overwrite it?');
+      if(!overwrite) return;
+    }
+    
+    data.append('file', file, file.name);
+    data.append('id', id);
+    data.append('overwrite', overwrite);
 
     let options = {
       method: 'post',
@@ -46,20 +78,18 @@ class FileUpload {
         return response.text();
     })
     .then((text) => {
-      message.open(false, text);
-      console.log(text);
-
-      /*let results = JSON.parse(text);
+      let results = JSON.parse(text);
       if(!isJson(text)) {
         message.open(false, text);
       } else {
         if(!results.success) {
           message.open(false, results.message);
         } else {
-          staircase.add(id, results.filename, 'file');
-          message.open();
+          staircase.add(id, file.name, 'file');
+          $('#upload').value = '';
+          delete $('ms-box').dataset.open;
         }
-      }*/
+      }
     });
   }
 }

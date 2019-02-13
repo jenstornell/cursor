@@ -90,7 +90,7 @@ stair-case {
               }
 
               &.sc-loading > .sc-current > .sc-icon {
-                  background-image: url('../../images/remixicon/refresh-line.svg');
+                  background-image: url('../../images/remixicon/18/refresh-line.svg');
                   animation: rotation 2s infinite linear;
 
                   &:hover {
@@ -99,9 +99,19 @@ stair-case {
               }
           }
           &[data-sc-type="file"] {
+            .sc-icon {
+              background-image: url('../../images/remixicon/18/file-text.svg');
+            }
+            &[data-sc-name$=".gif"],
+            &[data-sc-name$=".jpg"],
+            &[data-sc-name$=".jpeg"],
+            &[data-sc-name$=".png"],
+            &[data-sc-name$=".svg"],
+            &[data-sc-name$=".webp"] {
               .sc-icon {
-                  background-image: url('../../images/remixicon/18/file-text.svg');
+                background-image: url('../../images/remixicon/18/image-line.svg');
               }
+            }
           }
       }
   }

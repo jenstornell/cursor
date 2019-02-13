@@ -20,6 +20,7 @@ class FolderAdd {
 
   add() {
     message.open('loading', {autohide: false});
+    $('ms-box').dataset.autohide = '';
     this.ajax();
   }
 
@@ -35,7 +36,9 @@ class FolderAdd {
       let file = $('[data-sc-type="file"][data-sc-active]');
       if(file) {
         folder = file.closest('[data-sc-type="folder"]');
-        id = folder.dataset.scName;
+        if(folder) {
+          id = folder.dataset.scName;
+        }
       }
     }
     
@@ -58,8 +61,11 @@ class FolderAdd {
         if(!results.success) {
           message.open(false, results.message);
         } else {
+          if(id !== '/') {
+            staircase.open(id);
+          }
           staircase.add(id, results.name, 'folder');
-          message.open();
+          delete $('ms-box').dataset.open;
         }
       }
     });
