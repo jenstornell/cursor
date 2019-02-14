@@ -17,7 +17,7 @@ if($glob) {
       $extension = $parts['extension'];
     }
     if(is_file($item)) {
-      if(in_array($extension, filetypes::markdown()) || in_array($extension, filetypes::image())) {
+      if(in_array($extension, option('filetypes'))) {
         $data[] = basename($item);
       }
     } elseif(is_dir($item)) {

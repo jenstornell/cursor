@@ -25,12 +25,12 @@ $counter = 0;
   $parts = pathinfo($path);
   $extension = (isset($parts['extension'])) ? $parts['extension'] : '';
   $part = str_replace(option('project.path') . '/', '', $path);
-  if(!in_array($extension, filetypes::markdown()) && !in_array($extension, filetypes::image())) continue;
+  if(!in_array($extension, option('filetypes'))) continue;
   $counter++;
   ?>
     <li data-type="file" data-id="<?= $part; ?>" title="<?= basename($path); ?>">
       <figure>
-        <?php if(in_array($extension, filetypes::image())) : ?>
+        <?php if(in_array($extension, option('filetypes.image'))) : ?>
           <img src="<?= option('root.url'); ?>/api/image/<?= $part; ?>">
         <?php else : ?>
           <img src="<?= option('root.url'); ?>/assets/images/remixicon/file-text-line.svg">

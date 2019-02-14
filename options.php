@@ -1,11 +1,6 @@
 <?php
 return [
-  /*'root' => [
-    'url' => 'http://localhost/misc/markia',
-    'path' => __DIR__
-  ],*/
   'root.url' => 'http://localhost/misc/markia',
-  'root.path' => __DIR__,
   'spellcheck' => false,
   'project' => [
     'path' => __DIR__ . '/test',
@@ -17,6 +12,7 @@ return [
   ],
   'autosave' => 50,
   'revisions' => [
+    //'max' => false,
     'hide' => false
   ]
 ];

@@ -346,7 +346,8 @@ stair-case {
       font-size: .9rem;
       margin-top: -.2rem;
       margin-bottom: -.2rem;
-      color: #222; }
+      color: #222;
+      word-break: break-all; }
       stair-case ul li[data-sc-active] > .sc-current > .sc-name,
       stair-case ul li[data-sc-active] > .sc-current > .sc-name:hover {
         background: #0367d8;

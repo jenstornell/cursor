@@ -2,7 +2,7 @@
 class Snippet {
   function buffer($snippet_id, $args, $root = null) {
     if($root === null) {
-      $filepath = option('root.path') . '/snippets/' . $snippet_id . '.php';
+      $filepath = option('.root.path') . '/snippets/' . $snippet_id . '.php';
     } else {
       $filepath = $root;
     }

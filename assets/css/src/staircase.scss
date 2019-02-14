@@ -28,6 +28,7 @@ stair-case {
           margin-top: -.2rem;
           margin-bottom: -.2rem;
           color: #222;
+          word-break: break-all;
 
           &[data-sc-active] {
               > .sc-current {

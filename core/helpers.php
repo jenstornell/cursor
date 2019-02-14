@@ -32,9 +32,34 @@ function spellcheck() {
 
 function setOptions() {
   include __DIR__ . '/../libraries/tinyoptions.php';
+  defaults();
 
   $options = flattenOptions(include __DIR__ . '/../options.php');
   option::set($options);
+
+  option::set('filetypes', array_merge(option('filetypes.image'), option('filetypes.markdown')));
+}
+
+function defaults() {
+  option::default([
+    'autosave' => true,
+    'autosave.interval' => 15,
+    'bar.bottom' => true,
+    'bar.top' => true,
+    'editor.width' => 900,
+    'filetypes.image' => ['png', 'gif', 'svg', 'webp', 'jpg', 'jpeg'],
+    'filetypes.markdown' => ['markdown', 'mdown', 'mkdn', 'md', 'mkd', 'mdwn', 'mdtxt', 'mdtext', 'text', 'rmd', 'txt', ''],
+    'project.css' => null,
+    'project.path' => null,
+    'preview.width' => 900,
+    'root.url' => null,
+    'revisions.folder' => 'revisions',
+    'revisions.hide' => true,
+    'revisions.max' => 2,
+    'sidebar.width' => 300,
+    'spellcheck' => false,
+    '.root.path' => __DIR__ . '/../',
+  ]);
 }
 
 function humanFilesize($bytes, $decimals = 2) {
@@ -50,16 +75,6 @@ function post() {
   $content = file_get_contents('php://input');
   if(empty($content)) return;
   return json_decode($content, true);
-}
-
-class filetypes {
-  public static function markdown() {
-    return option('filetypes.markdown', ['markdown', 'mdown', 'mkdn', 'md', 'mkd', 'mdwn', 'mdtxt', 'mdtext', 'text', 'rmd', 'txt', '']);
-  }
-
-  public static function image() {
-    return option('filetypes.image', ['png', 'gif', 'svg', 'webp', 'jpg', 'jpeg']);
-  }
 }
 
 function is_dir_empty($dir) {

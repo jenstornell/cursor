@@ -1,5 +1,5 @@
 <?php
-option::set('.route.path', option('root.path') . '/core/actions');
+option::set('.route.path', option('.root.path') . '/core/actions');
 option::set('.route.post', post());
 
 routes([

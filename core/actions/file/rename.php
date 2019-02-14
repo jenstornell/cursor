@@ -57,14 +57,7 @@ class FileRename {
   }
 
   function onDisallowedFiletype() {
-    $is_markdown = in_array($this->new_extension, filetypes::markdown());
-    $is_image = in_array($this->new_extension, filetypes::image());
-
-    /*echo $this->extension;
-    echo $is_markdown . "#";
-    echo $is_image;*/
-
-    if($is_markdown || $is_image) return;
+    if(in_array($this->new_extension, option('filetypes'))) return;
 
     $this->json['message'] = "Error! You can't rename the file to this filetype!";
     $this->output(false);

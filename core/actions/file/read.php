@@ -27,19 +27,16 @@ class FileRead {
   }
 
   function onDisallowedFiletype() {
-    $is_markdown = in_array($this->extension, filetypes::markdown());
-    $is_image = in_array($this->extension, filetypes::image());
-
-    if($is_markdown || $is_image) return;
+    if(in_array($this->extension, option('filetypes'))) return;
 
     $this->json['message'] = 'This filetype is not allowed!';
     $this->output(false);
   }
 
   function onSuccess() {
-    if(in_array($this->extension, filetypes::markdown())) {
+    if(in_array($this->extension, option('filetypes.markdown'))) {
       $this->successMarkdown();
-    } elseif(in_array($this->extension, filetypes::image())) {
+    } elseif(in_array($this->extension, option('filetypes.image'))) {
       $this->successImage();
     }
   }

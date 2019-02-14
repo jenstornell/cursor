@@ -34,6 +34,11 @@ class FolderDelete {
           message.open(false, results.message);
         } else {
           staircase.delete(id, 'folder');
+
+          if(dirname(id)) {
+            staircase.select(dirname(id), 'folder');
+          }
+          
           delete $('ms-box').dataset.open;
         }
       }

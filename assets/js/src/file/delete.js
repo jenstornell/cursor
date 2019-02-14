@@ -35,6 +35,10 @@ class FileDelete {
           staircase.delete(id, 'file');
           staircase.delete(results.revisions_id, 'folder');
 
+          if(dirname(id)) {
+            staircase.select(dirname(id), 'folder');
+          }
+
           delete $('ms-box').dataset.open;
           delete $('body').dataset.pending;
         }
