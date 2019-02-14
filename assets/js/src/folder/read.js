@@ -75,6 +75,8 @@ class FolderRead {
 
         if(type == 'file') {
           this.fileread.get(id);
+          staircase.open(this.dirname(id));
+          //staircase.select(id, 'file');
         } else {
           this.get(id);
           action = 'folder/read';
@@ -83,6 +85,19 @@ class FolderRead {
         }
       });
     });
+  }
+
+  trimSlashes(str) {
+    return str.replace(/^\/+|\/+$/g, '');
+  };
+
+  basename(path) {
+    return path.replace(/.*\//, '');
+  }
+
+  dirname(path) {
+    let dirname = path.match(/.*\//);
+    if(dirname && dirname.length) return this.trimSlashes(dirname[0]);
   }
 
   openParent(el) {

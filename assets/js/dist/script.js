@@ -140,6 +140,74 @@ class Render {
     $('.preview').innerHTML = marked($('textarea').value);
   }
 }
+class FilefolderDelete {
+  constructor(params) {
+    this.root = params.root;
+    this.options = params.options;
+    this.filedelete = new FileDelete({
+      root: this.root,
+      options: this.options,
+    });
+    this.folderdelete = new FolderDelete({
+      root: this.root,
+      options: this.options,
+    });
+  }
+
+  init() {
+    this.events();
+  }
+
+  events() {
+    this.onClick();
+  }
+
+  onClick() {
+    $('.filebar .delete').addEventListener('click', (e) => {
+      if($('[data-sc-type="file"][data-sc-active]')) {
+        this.filedelete.delete();
+      } else {
+        this.folderdelete.delete();
+      }
+    });
+  }
+}
+class FilefolderRename {
+  constructor(params) {
+    this.root = params.root;
+    this.options = params.options;
+    this.filerename = new FileRename({
+      root: this.root,
+      options: this.options,
+    });
+    this.folderrename = new FolderRename({
+      root: this.root,
+      options: this.options,
+    });
+  }
+
+  init() {
+    this.events();
+  }
+
+  events() {
+    this.onChange();
+  }
+
+  onChange() {
+    $('.topbar .path input').addEventListener('keyup', (e) => {
+      if(e.code == 'Enter') {
+        e.target.blur();
+
+        if($('[data-sc-type="file"][data-sc-active]')) {
+          this.filerename.rename();
+        } else if($('[data-sc-type="folder"][data-sc-active]')) {
+          this.folderrename.rename();
+        }
+      }
+    });
+  }
+}
 class FileAdd {
   constructor(params) {
     this.root = params.root;
@@ -264,7 +332,6 @@ class FileDelete {
           staircase.delete(id, 'file');
           staircase.delete(results.revisions_id, 'folder');
 
-          console.log(results.revisions_id);
           delete $('ms-box').dataset.open;
           delete $('body').dataset.pending;
         }
@@ -441,9 +508,8 @@ class Save {
           this.render.updatePending();
           this.render.updateTimestamp(results.timestamp);
 
-          let revisions_id = options['revisions.folder'] + '/' + id;
-
-          console.log(revisions_id);
+          let revisions_id = (!this.dirname(id)) ? '' : this.dirname(id) + '/';
+          revisions_id += options['revisions.folder'] + '/' + this.basename(id);
 
           staircase.refresh(revisions_id);
           message.open();
@@ -452,6 +518,19 @@ class Save {
         }
       }
     });
+  }
+
+  trimSlashes(str) {
+    return str.replace(/^\/+|\/+$/g, '');
+  };
+
+  basename(path) {
+    return path.replace(/.*\//, '');
+  }
+
+  dirname(path) {
+    let dirname = path.match(/.*\//);
+    if(dirname && dirname.length) return this.trimSlashes(dirname[0]);
   }
 
   events() {
@@ -586,74 +665,6 @@ class FileUpload {
           staircase.add(id, file.name, 'file');
           $('#upload').value = '';
           delete $('ms-box').dataset.open;
-        }
-      }
-    });
-  }
-}
-class FilefolderDelete {
-  constructor(params) {
-    this.root = params.root;
-    this.options = params.options;
-    this.filedelete = new FileDelete({
-      root: this.root,
-      options: this.options,
-    });
-    this.folderdelete = new FolderDelete({
-      root: this.root,
-      options: this.options,
-    });
-  }
-
-  init() {
-    this.events();
-  }
-
-  events() {
-    this.onClick();
-  }
-
-  onClick() {
-    $('.filebar .delete').addEventListener('click', (e) => {
-      if($('[data-sc-type="file"][data-sc-active]')) {
-        this.filedelete.delete();
-      } else {
-        this.folderdelete.delete();
-      }
-    });
-  }
-}
-class FilefolderRename {
-  constructor(params) {
-    this.root = params.root;
-    this.options = params.options;
-    this.filerename = new FileRename({
-      root: this.root,
-      options: this.options,
-    });
-    this.folderrename = new FolderRename({
-      root: this.root,
-      options: this.options,
-    });
-  }
-
-  init() {
-    this.events();
-  }
-
-  events() {
-    this.onChange();
-  }
-
-  onChange() {
-    $('.topbar .path input').addEventListener('keyup', (e) => {
-      if(e.code == 'Enter') {
-        e.target.blur();
-
-        if($('[data-sc-type="file"][data-sc-active]')) {
-          this.filerename.rename();
-        } else if($('[data-sc-type="folder"][data-sc-active]')) {
-          this.folderrename.rename();
         }
       }
     });
@@ -851,6 +862,8 @@ class FolderRead {
 
         if(type == 'file') {
           this.fileread.get(id);
+          staircase.open(this.dirname(id));
+          //staircase.select(id, 'file');
         } else {
           this.get(id);
           action = 'folder/read';
@@ -859,6 +872,19 @@ class FolderRead {
         }
       });
     });
+  }
+
+  trimSlashes(str) {
+    return str.replace(/^\/+|\/+$/g, '');
+  };
+
+  basename(path) {
+    return path.replace(/.*\//, '');
+  }
+
+  dirname(path) {
+    let dirname = path.match(/.*\//);
+    if(dirname && dirname.length) return this.trimSlashes(dirname[0]);
   }
 
   openParent(el) {
@@ -3142,8 +3168,6 @@ class StaircaseCore {
     
     let current = this.item(id, 'folder');
 
-    console.log(current);
-
     if(current.dataset.scChildren !== undefined) {
       this.state(current, 'open');
       if(!rest.length) return;
@@ -3234,11 +3258,12 @@ class StaircaseCore {
     this.options();
     let li = this.item(id, 'folder');
     if(!li) return;
+    if(li.dataset.scState !== 'open') return;
 
     li.remove();
 
-    this.add('revisions', 'untitled-1550064687.md', 'folder');
-    this.open('revisions/untitled-1550064687.md');
+    this.add(this.dirname(id), this.basename(id), 'folder');
+    this.open(id);
   }
 
   add(base, name, type) {
@@ -3313,6 +3338,14 @@ class StaircaseCore {
     this.options();
     this.removeActive();
     this.callback('select');
+  }
+
+  basename(path) {
+    return path.replace(/.*\//, '');
+  }
+
+  dirname(path) {
+    return this.trimSlashes(path.match(/.*\//)[0]);
   }
 
   item(id, type) {

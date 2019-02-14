@@ -2,7 +2,8 @@ aside {
   background: #eee;
   width: 300px;
   border-right: 1px solid #ccc;
-  overflow-y: auto;
+  //overflow-y: auto;
+  display: flex;
   flex-direction: column;
   border-top-left-radius: .5rem;
   border-bottom-left-radius: .5rem;
@@ -11,7 +12,7 @@ aside {
     background: #ddd;
     display: flex;
     justify-content: flex-end;
-    height: 2.5rem;
+    min-height: 2.5rem;
     border-bottom: 1px solid #ccc;
     padding: 0 .5rem;
     user-select: none;
@@ -39,10 +40,6 @@ aside {
         }
       }
     }
-  }
-
-  &.scrollbar::-webkit-scrollbar-thumb {
-    border-color: #eee;
   }
 }
 

@@ -84,8 +84,6 @@ class StaircaseCore {
     
     let current = this.item(id, 'folder');
 
-    console.log(current);
-
     if(current.dataset.scChildren !== undefined) {
       this.state(current, 'open');
       if(!rest.length) return;
@@ -176,11 +174,12 @@ class StaircaseCore {
     this.options();
     let li = this.item(id, 'folder');
     if(!li) return;
+    if(li.dataset.scState !== 'open') return;
 
     li.remove();
 
-    this.add('revisions', 'untitled-1550064687.md', 'folder');
-    this.open('revisions/untitled-1550064687.md');
+    this.add(this.dirname(id), this.basename(id), 'folder');
+    this.open(id);
   }
 
   add(base, name, type) {
@@ -255,6 +254,14 @@ class StaircaseCore {
     this.options();
     this.removeActive();
     this.callback('select');
+  }
+
+  basename(path) {
+    return path.replace(/.*\//, '');
+  }
+
+  dirname(path) {
+    return this.trimSlashes(path.match(/.*\//)[0]);
   }
 
   item(id, type) {

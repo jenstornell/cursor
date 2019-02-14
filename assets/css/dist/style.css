@@ -204,7 +204,8 @@ ms-box {
     -webkit-animation-timing-function: linear;
             animation-timing-function: linear; }
     ms-box[data-type="loading"] ms-box-icon {
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='feather feather-loader'%3E%3Cline x1='12' y1='2' x2='12' y2='6'%3E%3C/line%3E%3Cline x1='12' y1='18' x2='12' y2='22'%3E%3C/line%3E%3Cline x1='4.93' y1='4.93' x2='7.76' y2='7.76'%3E%3C/line%3E%3Cline x1='16.24' y1='16.24' x2='19.07' y2='19.07'%3E%3C/line%3E%3Cline x1='2' y1='12' x2='6' y2='12'%3E%3C/line%3E%3Cline x1='18' y1='12' x2='22' y2='12'%3E%3C/line%3E%3Cline x1='4.93' y1='19.07' x2='7.76' y2='16.24'%3E%3C/line%3E%3Cline x1='16.24' y1='7.76' x2='19.07' y2='4.93'%3E%3C/line%3E%3C/svg%3E"); }
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='feather feather-loader'%3E%3Cline x1='12' y1='2' x2='12' y2='6'%3E%3C/line%3E%3Cline x1='12' y1='18' x2='12' y2='22'%3E%3C/line%3E%3Cline x1='4.93' y1='4.93' x2='7.76' y2='7.76'%3E%3C/line%3E%3Cline x1='16.24' y1='16.24' x2='19.07' y2='19.07'%3E%3C/line%3E%3Cline x1='2' y1='12' x2='6' y2='12'%3E%3C/line%3E%3Cline x1='18' y1='12' x2='22' y2='12'%3E%3C/line%3E%3Cline x1='4.93' y1='19.07' x2='7.76' y2='16.24'%3E%3C/line%3E%3Cline x1='16.24' y1='7.76' x2='19.07' y2='4.93'%3E%3C/line%3E%3C/svg%3E");
+      background-image: url("../../images/remixicon/refresh-line.svg"); }
 
 @-webkit-keyframes spin {
   from {
@@ -246,7 +247,7 @@ aside {
   background: #eee;
   width: 300px;
   border-right: 1px solid #ccc;
-  overflow-y: auto;
+  display: flex;
   flex-direction: column;
   border-top-left-radius: .5rem;
   border-bottom-left-radius: .5rem; }
@@ -254,7 +255,7 @@ aside {
     background: #ddd;
     display: flex;
     justify-content: flex-end;
-    height: 2.5rem;
+    min-height: 2.5rem;
     border-bottom: 1px solid #ccc;
     padding: 0 .5rem;
     -webkit-user-select: none;
@@ -277,8 +278,6 @@ aside {
         aside .filebar ul li img {
           width: 24px;
           height: 24px; }
-  aside.scrollbar::-webkit-scrollbar-thumb {
-    border-color: #eee; }
 
 #upload {
   display: none; }
@@ -331,7 +330,10 @@ main {
 stair-case {
   display: block;
   font-family: Arial, Helvetica, sans-serif;
-  padding: 1rem; }
+  padding: 1rem;
+  overflow-y: auto; }
+  stair-case.scrollbar::-webkit-scrollbar-thumb {
+    border-color: #eee; }
   stair-case ul {
     margin-left: 1rem;
     list-style: none; }

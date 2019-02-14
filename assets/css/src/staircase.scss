@@ -11,6 +11,11 @@ stair-case {
   display: block;
   font-family: Arial, Helvetica, sans-serif;
   padding: 1rem;
+  overflow-y: auto;
+
+  &.scrollbar::-webkit-scrollbar-thumb {
+    border-color: #eee;
+  }
 
   ul {
       margin-left: 1rem;

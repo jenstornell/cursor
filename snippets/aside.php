@@ -1,4 +1,4 @@
-<aside class="scrollbar">
+<aside>
   <div class="filebar">
     <ul>
       <li class="upload-file">
@@ -13,15 +13,9 @@
       <li class="delete">
         <img src="<?= option('root.url'); ?>/assets/images/remixicon/delete-bin-line.svg">
       </li>
-      <?php /*
-      <li class="add-refresh">
-        <img src="<?= option('root.url'); ?>/assets/images/refresh-cw.svg">
-      </li>
-      */
-      ?>
     </ul>
   </div>
-  <stair-case data-staircase-path="<?= option('root.url'); ?>/core/filetree.php"></stair-case>
+  <stair-case class="scrollbar" data-staircase-path="<?= option('root.url'); ?>/core/filetree.php"></stair-case>
 </aside>
 
 <input type="file" id="upload">

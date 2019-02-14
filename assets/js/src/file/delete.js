@@ -35,7 +35,6 @@ class FileDelete {
           staircase.delete(id, 'file');
           staircase.delete(results.revisions_id, 'folder');
 
-          console.log(results.revisions_id);
           delete $('ms-box').dataset.open;
           delete $('body').dataset.pending;
         }

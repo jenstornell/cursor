@@ -9,19 +9,19 @@ include __DIR__ . '/core/snippet.php';
 option::default([
   'autosave' => true,
   'autosave.interval' => 15,
-  'editor.width' => 900,
-  'root.url' => null,
-  'root.path' => null,
-  'spellcheck' => false,
-  'project.path' => null,
-  'project.css' => null,
-  'bar.top' => true,
   'bar.bottom' => true,
+  'bar.top' => true,
+  'editor.width' => 900,
+  'project.css' => null,
+  'project.path' => null,
   'preview.width' => 900,
-  'revisions.hide' => true,
+  'root.path' => null,
+  'root.url' => null,
   'revisions.folder' => 'revisions',
+  'revisions.hide' => true,
   'revisions.max' => 2,
   'sidebar.width' => 300,
+  'spellcheck' => false,
 ]);
 
 $options = flattenOptions($options);
