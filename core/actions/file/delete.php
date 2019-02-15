@@ -42,8 +42,12 @@ class FileDelete {
       }
     }
     
-    if(!$success || !is_dir_empty($this->revisionspath)) {
-      $this->json['message'] = 'Error! File revisions could not be deleted!';
+    if(!$success) {
+      $this->json['message'] = 'Error! At least one revision could not be deleted!';
+      $this->output(false);
+    }
+    if(!is_dir_empty($this->revisionspath)) {
+      $this->json['message'] = 'Error! Some revision files could not be deleted!';
       $this->output(false);
     }
     return rmdir($this->revisionspath);

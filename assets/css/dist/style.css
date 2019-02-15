@@ -261,7 +261,9 @@ aside {
     -webkit-user-select: none;
        -moz-user-select: none;
         -ms-user-select: none;
-            user-select: none; }
+            user-select: none;
+    border-top-left-radius: .5rem;
+    border-bottom-left-radius: .5rem; }
     aside .filebar ul {
       display: flex;
       list-style: none;
@@ -375,7 +377,10 @@ stair-case {
         padding-left: .2rem;
         margin-top: .2rem;
         margin-bottom: .2rem;
-        padding-right: .2rem; }
+        padding-right: .2rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis; }
         stair-case ul li .sc-name:hover {
           background-color: #ddd; }
       stair-case ul li[data-sc-type="folder"] > .sc-current > .sc-icon {

@@ -40,6 +40,9 @@ class TinyOptions {
 
   public function all() {
     global $tiny_options;
+    return array_merge($tiny_options[$this->scope]['defaults'], $tiny_options[$this->scope]['options']);
+    
+    return $array;
     return $tiny_options[$this->scope]['options'];
   }
 }

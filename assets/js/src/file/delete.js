@@ -32,12 +32,9 @@ class FileDelete {
         if(!results.success) {
           message.open(false, results.message);
         } else {
-          staircase.delete(id, 'file');
-          staircase.delete(results.revisions_id, 'folder');
-
-          if(dirname(id)) {
-            staircase.select(dirname(id), 'folder');
-          }
+          staircase.delete(id);
+          staircase.delete(results.revisions_id);
+          staircase.select(staircase.dirname(id));
 
           delete $('ms-box').dataset.open;
           delete $('body').dataset.pending;

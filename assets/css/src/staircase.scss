@@ -76,6 +76,9 @@ stair-case {
               margin-top: .2rem;
               margin-bottom: .2rem;
               padding-right: .2rem;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
 
               &:hover {
                   background-color: #ddd;

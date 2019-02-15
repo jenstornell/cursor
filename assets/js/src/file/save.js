@@ -37,29 +37,18 @@ class Save {
           this.render.updatePending();
           this.render.updateTimestamp(results.timestamp);
 
-          let revisions_id = (!this.dirname(id)) ? '' : this.dirname(id) + '/';
-          revisions_id += options['revisions.folder'] + '/' + this.basename(id);
+          let join = staircase.join(staircase.dirname(id), options['revisions.folder'] + '/' + staircase.basename(id));
+          let revision_id = staircase.join(staircase.dirname(id), this.options['revisions.folder']);
 
-          staircase.refresh(revisions_id);
+          staircase.refresh(join);
+          staircase.add(revision_id, 'folder');
+
           message.open();
           this.resetTimeout();
           this.startTimeout();
         }
       }
     });
-  }
-
-  trimSlashes(str) {
-    return str.replace(/^\/+|\/+$/g, '');
-  };
-
-  basename(path) {
-    return path.replace(/.*\//, '');
-  }
-
-  dirname(path) {
-    let dirname = path.match(/.*\//);
-    if(dirname && dirname.length) return this.trimSlashes(dirname[0]);
   }
 
   events() {

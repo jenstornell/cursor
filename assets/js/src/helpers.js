@@ -25,16 +25,3 @@ function isJson(str) {
   }
   return true;
 }
-
-function basename(path) {
-  return path.replace(/.*\//, '');
-}
-
-function dirname(path) {
-  let dirname = path.match(/.*\//);
-  if(dirname && dirname.length) return this.trimSlashes(dirname[0]);
-}
-
-function trimSlashes(str) {
-  return str.replace(/^\/+|\/+$/g, '');
-};

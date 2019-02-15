@@ -64,7 +64,8 @@ class FolderAdd {
           if(id !== '/') {
             staircase.open(id);
           }
-          staircase.add(id, results.name, 'folder');
+          let join = staircase.join(id, results.name);
+          staircase.add(join, 'folder');
           delete $('ms-box').dataset.open;
         }
       }

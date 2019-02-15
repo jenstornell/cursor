@@ -35,8 +35,8 @@ class FileRename {
         if(!results.success) {
           message.open(false, results.message);
         } else {
-          staircase.rename(results.old_id, results.new_filename, 'file');
-          staircase.rename(results.old_revision, results.new_filename, 'folder');
+          staircase.rename(results.old_id, results.new_filename);
+          staircase.rename(results.old_revision, results.new_filename);
           message.open();
         }
       }

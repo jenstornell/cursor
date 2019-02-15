@@ -85,11 +85,16 @@ class FileUpload {
         if(!results.success) {
           message.open(false, results.message);
         } else {
-          staircase.add(id, file.name, 'file');
-          $('#upload').value = '';
+          let join = staircase.join(id, file.name);
+          staircase.add(join, 'file');
+          this.resetInput();
           delete $('ms-box').dataset.open;
         }
       }
     });
+  }
+
+  resetInput() {
+    $('#upload').value = '';
   }
 }

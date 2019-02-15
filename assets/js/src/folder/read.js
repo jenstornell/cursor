@@ -12,8 +12,7 @@ class FolderRead {
       if(!confirm('The current file has not been saved. Load anyway?')) {
         if(buffer_id === '') return;
 
-        staircase.removeActive();
-        staircase.select(buffer_id, buffer_type, false);
+        staircase.select(buffer_id, false);
         return;
       }
     }
@@ -75,8 +74,7 @@ class FolderRead {
 
         if(type == 'file') {
           this.fileread.get(id);
-          staircase.open(this.dirname(id));
-          //staircase.select(id, 'file');
+          staircase.open(staircase.dirname(id));
         } else {
           this.get(id);
           action = 'folder/read';
@@ -85,19 +83,6 @@ class FolderRead {
         }
       });
     });
-  }
-
-  trimSlashes(str) {
-    return str.replace(/^\/+|\/+$/g, '');
-  };
-
-  basename(path) {
-    return path.replace(/.*\//, '');
-  }
-
-  dirname(path) {
-    let dirname = path.match(/.*\//);
-    if(dirname && dirname.length) return this.trimSlashes(dirname[0]);
   }
 
   openParent(el) {

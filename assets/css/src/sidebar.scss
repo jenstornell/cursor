@@ -16,6 +16,8 @@ aside {
     border-bottom: 1px solid #ccc;
     padding: 0 .5rem;
     user-select: none;
+    border-top-left-radius: .5rem;
+    border-bottom-left-radius: .5rem;
 
     ul {
       display: flex;

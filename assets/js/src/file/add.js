@@ -76,8 +76,9 @@ class FileAdd {
           if(id !== '/') {
             staircase.open(id);
           }
-          
-          staircase.add(id, results.filename, 'file');
+
+          let join = staircase.join(id, results.filename);
+          staircase.add(join, 'file');
           delete $('body').dataset.pending;
           delete $('ms-box').dataset.open;
         }

@@ -34,7 +34,7 @@ class FolderRename {
         if(!results.success) {
           message.open(false, results.message);
         } else {
-          staircase.rename(results.old_id, results.new_name, 'folder');
+          staircase.rename(results.old_id, results.new_name);
           message.open();
         }
       }

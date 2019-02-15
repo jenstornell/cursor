@@ -11,8 +11,7 @@ class FileRead {
       if(!confirm('The current file has not been saved. Load anyway?')) {
         if(buffer_id === '') return;
 
-        staircase.removeActive();
-        staircase.select(buffer_id, buffer_type, false);
+        staircase.select(buffer_id, false);
         return;
       }
     }
@@ -49,6 +48,14 @@ class FileRead {
           } else if(results.type == 'image') {
             this.toImage(id, results);
           }
+
+          if(results.type == 'md' || results.type == 'image') {
+            render.updateFilepath(id);
+            render.updateFilesize(results.filesize);
+
+            delete $('body').dataset.pending;
+            delete $('ms-box').dataset.open;
+          }
         }
       }
     });
@@ -64,22 +71,12 @@ class FileRead {
     $('body').dataset.state = 'markdown';
 
     render.updateCounter();
-    render.updateFilepath(id);
-    render.updateFilesize(results.filesize);
-
-    delete $('body').dataset.pending;
-    delete $('ms-box').dataset.open;
   }
 
   toImage(id, results) {
     $('body').dataset.state = 'image';
     $('.image img').setAttribute('src' , results.url);
 
-    render.updateFilepath(id);
     render.updateDimensions(results.dimensions);
-    render.updateFilesize(results.filesize);
-    
-    delete $('body').dataset.pending;
-    delete $('ms-box').dataset.open;
   }
 }

@@ -61,19 +61,6 @@ function isJson(str) {
   }
   return true;
 }
-
-function basename(path) {
-  return path.replace(/.*\//, '');
-}
-
-function dirname(path) {
-  let dirname = path.match(/.*\//);
-  if(dirname && dirname.length) return this.trimSlashes(dirname[0]);
-}
-
-function trimSlashes(str) {
-  return str.replace(/^\/+|\/+$/g, '');
-};
 class Render {
   constructor() {
 
@@ -88,22 +75,7 @@ class Render {
 
   events() {
     this.onKeyUp();
-    //this.onOutsideSelected();
   }
-
-  /*onOutsideSelected() {
-    document.addEventListener('click', (e) => {
-      if(e.target.classList.contains('sc-name')) return;
-
-      let li = $('[data-sc-active]');
-
-      if(!li) return;
-
-      let type = li.dataset.scType;
-      let id = li.dataset.scName;
-      staircase.deselect(id, type);
-    });
-  }*/
 
   onKeyUp() {
     $('textarea').addEventListener('keyup', (e) => {
@@ -150,7 +122,9 @@ class Render {
   }
 
   toPreview() {
-    $('.preview').innerHTML = marked($('textarea').value);
+    $('.preview').innerHTML = marked($('textarea').value, {
+      baseUrl: 'test'
+    });
   }
 }
 class FileAdd {
@@ -231,8 +205,9 @@ class FileAdd {
           if(id !== '/') {
             staircase.open(id);
           }
-          
-          staircase.add(id, results.filename, 'file');
+
+          let join = staircase.join(id, results.filename);
+          staircase.add(join, 'file');
           delete $('body').dataset.pending;
           delete $('ms-box').dataset.open;
         }
@@ -274,12 +249,9 @@ class FileDelete {
         if(!results.success) {
           message.open(false, results.message);
         } else {
-          staircase.delete(id, 'file');
-          staircase.delete(results.revisions_id, 'folder');
-
-          if(dirname(id)) {
-            staircase.select(dirname(id), 'folder');
-          }
+          staircase.delete(id);
+          staircase.delete(results.revisions_id);
+          staircase.select(staircase.dirname(id));
 
           delete $('ms-box').dataset.open;
           delete $('body').dataset.pending;
@@ -301,8 +273,7 @@ class FileRead {
       if(!confirm('The current file has not been saved. Load anyway?')) {
         if(buffer_id === '') return;
 
-        staircase.removeActive();
-        staircase.select(buffer_id, buffer_type, false);
+        staircase.select(buffer_id, false);
         return;
       }
     }
@@ -339,6 +310,14 @@ class FileRead {
           } else if(results.type == 'image') {
             this.toImage(id, results);
           }
+
+          if(results.type == 'md' || results.type == 'image') {
+            render.updateFilepath(id);
+            render.updateFilesize(results.filesize);
+
+            delete $('body').dataset.pending;
+            delete $('ms-box').dataset.open;
+          }
         }
       }
     });
@@ -354,23 +333,13 @@ class FileRead {
     $('body').dataset.state = 'markdown';
 
     render.updateCounter();
-    render.updateFilepath(id);
-    render.updateFilesize(results.filesize);
-
-    delete $('body').dataset.pending;
-    delete $('ms-box').dataset.open;
   }
 
   toImage(id, results) {
     $('body').dataset.state = 'image';
     $('.image img').setAttribute('src' , results.url);
 
-    render.updateFilepath(id);
     render.updateDimensions(results.dimensions);
-    render.updateFilesize(results.filesize);
-    
-    delete $('body').dataset.pending;
-    delete $('ms-box').dataset.open;
   }
 }
 class FileRename {
@@ -410,8 +379,8 @@ class FileRename {
         if(!results.success) {
           message.open(false, results.message);
         } else {
-          staircase.rename(results.old_id, results.new_filename, 'file');
-          staircase.rename(results.old_revision, results.new_filename, 'folder');
+          staircase.rename(results.old_id, results.new_filename);
+          staircase.rename(results.old_revision, results.new_filename);
           message.open();
         }
       }
@@ -457,29 +426,18 @@ class Save {
           this.render.updatePending();
           this.render.updateTimestamp(results.timestamp);
 
-          let revisions_id = (!this.dirname(id)) ? '' : this.dirname(id) + '/';
-          revisions_id += options['revisions.folder'] + '/' + this.basename(id);
+          let join = staircase.join(staircase.dirname(id), options['revisions.folder'] + '/' + staircase.basename(id));
+          let revision_id = staircase.join(staircase.dirname(id), this.options['revisions.folder']);
 
-          staircase.refresh(revisions_id);
+          staircase.refresh(join);
+          staircase.add(revision_id, 'folder');
+
           message.open();
           this.resetTimeout();
           this.startTimeout();
         }
       }
     });
-  }
-
-  trimSlashes(str) {
-    return str.replace(/^\/+|\/+$/g, '');
-  };
-
-  basename(path) {
-    return path.replace(/.*\//, '');
-  }
-
-  dirname(path) {
-    let dirname = path.match(/.*\//);
-    if(dirname && dirname.length) return this.trimSlashes(dirname[0]);
   }
 
   events() {
@@ -611,12 +569,17 @@ class FileUpload {
         if(!results.success) {
           message.open(false, results.message);
         } else {
-          staircase.add(id, file.name, 'file');
-          $('#upload').value = '';
+          let join = staircase.join(id, file.name);
+          staircase.add(join, 'file');
+          this.resetInput();
           delete $('ms-box').dataset.open;
         }
       }
     });
+  }
+
+  resetInput() {
+    $('#upload').value = '';
   }
 }
 class FilefolderDelete {
@@ -753,7 +716,8 @@ class FolderAdd {
           if(id !== '/') {
             staircase.open(id);
           }
-          staircase.add(id, results.name, 'folder');
+          let join = staircase.join(id, results.name);
+          staircase.add(join, 'folder');
           delete $('ms-box').dataset.open;
         }
       }
@@ -796,10 +760,7 @@ class FolderDelete {
           message.open(false, results.message);
         } else {
           staircase.delete(id, 'folder');
-
-          if(dirname(id)) {
-            staircase.select(dirname(id), 'folder');
-          }
+          staircase.select(staircase.dirname(id));
           
           delete $('ms-box').dataset.open;
         }
@@ -821,8 +782,7 @@ class FolderRead {
       if(!confirm('The current file has not been saved. Load anyway?')) {
         if(buffer_id === '') return;
 
-        staircase.removeActive();
-        staircase.select(buffer_id, buffer_type, false);
+        staircase.select(buffer_id, false);
         return;
       }
     }
@@ -884,8 +844,7 @@ class FolderRead {
 
         if(type == 'file') {
           this.fileread.get(id);
-          staircase.open(this.dirname(id));
-          //staircase.select(id, 'file');
+          staircase.open(staircase.dirname(id));
         } else {
           this.get(id);
           action = 'folder/read';
@@ -894,19 +853,6 @@ class FolderRead {
         }
       });
     });
-  }
-
-  trimSlashes(str) {
-    return str.replace(/^\/+|\/+$/g, '');
-  };
-
-  basename(path) {
-    return path.replace(/.*\//, '');
-  }
-
-  dirname(path) {
-    let dirname = path.match(/.*\//);
-    if(dirname && dirname.length) return this.trimSlashes(dirname[0]);
   }
 
   openParent(el) {
@@ -954,7 +900,7 @@ class FolderRename {
         if(!results.success) {
           message.open(false, results.message);
         } else {
-          staircase.rename(results.old_id, results.new_name, 'folder');
+          staircase.rename(results.old_id, results.new_name);
           message.open();
         }
       }
@@ -3105,29 +3051,29 @@ document.addEventListener('DOMContentLoaded', () => {
   base.init();
 });
 class staircase {
-  static add(base, name, type) {
+  static add(id, type) {
     let staircase = new StaircaseCore();
-    staircase.add(base, name, type);
+    staircase.add(id, type);
   }
 
-  static delete(id, type) {
+  static delete(id) {
     let staircase = new StaircaseCore();
-    staircase.delete(id, type);
+    staircase.delete(id);
   }
 
-  static rename(id, name, type) {
+  static rename(id, name) {
     let staircase = new StaircaseCore();
-    staircase.rename(id, name, type);
+    staircase.rename(id, name);
   }
 
-  static select(id, type, callback = true) {
+  static select(id, callback = true) {
     let staircase = new StaircaseCore();
-    staircase.select(id, type, callback);
+    staircase.select(id, callback);
   }
 
-  static deselect(id, type) {
+  static deselect(id, callback = true) {
     let staircase = new StaircaseCore();
-    staircase.deselect(id, type);
+    staircase.deselect(id, callback);
   }
 
   static open(id) {
@@ -3145,9 +3091,19 @@ class staircase {
     staircase.refresh(id);
   }
 
-  static removeActive() {
+  static join(base, item) {
     let staircase = new StaircaseCore();
-    staircase.removeActive();
+    return staircase.join(base, item);
+  }
+
+  static basename(id) {
+    let staircase = new StaircaseCore();
+    return staircase.basename(id);
+  }
+
+  static dirname(id) {
+    let staircase = new StaircaseCore();
+    return staircase.dirname(id);
   }
 }
 class StaircaseCore {
@@ -3188,7 +3144,7 @@ class StaircaseCore {
     data.id = id;
     json = JSON.stringify(data);
     
-    let current = this.item(id, 'folder');
+    let current = this.item(id);
 
     if(current.dataset.scChildren !== undefined) {
       this.state(current, 'open');
@@ -3202,7 +3158,6 @@ class StaircaseCore {
     fetch(this.o.path, this.fetchParams(json))
     .then((response) => { return response.text(); })
     .then((text) => {
-      console.log(text);
       current.classList.remove('sc-loading');
 
       let args = {};
@@ -3210,8 +3165,8 @@ class StaircaseCore {
       args.element = current;
 
       if(this.isJson(text)) {
-        let ul_element = this.createList(JSON.parse(text), id);
-        let current = this.item(id, 'folder');
+        let ul_element = this.createList(id, JSON.parse(text));
+        let current = this.item(id);
         
         current.appendChild(ul_element);
         this.children(current);
@@ -3279,45 +3234,42 @@ class StaircaseCore {
 
   refresh(id) {
     this.options();
-    let li = this.item(id, 'folder');
+    let li = this.item(id);
     if(!li) return;
     if(li.dataset.scState !== 'open') return;
 
-    li.remove();
+    li.remove(this.dirname(id));
 
-    this.add(this.dirname(id), this.basename(id), 'folder');
+    this.add(id, 'folder');
     this.open(id);
   }
 
-  add(base, name, type) {
+  add(id, type) {
     this.options();
-    let ul = this.$('[data-sc-name="' + base + '"] > [data-sc-children]');
+    let ul = this.$('[data-sc-name="' + this.dirname(id) + '"] > [data-sc-children]');
+    
     if(!ul) return;
+    if(this.item(id)) return;
 
-    let id = this.trimSlashes(base + '/' + name);
-    if(this.item(id, type)) return;
-
-    let li = this.append(base, name, type);
-    let el_name = this.$('.sc-name', li);
-    let el_icon = this.$('.sc-icon', li);
+    let li = this.append(id, type);
 
     ul.appendChild(li);
-    this.onClickName(el_name);
-    this.onClickFolder(el_icon);
+    this.onClickName(this.$('.sc-name', li));
+    this.onClickFolder(this.$('.sc-icon', li));
 
     this.sort(ul);
   }
 
-  delete(id, type) {
+  delete(id) {
     this.options();
-    let li = this.item(id, type);
+    let li = this.item(id);
     if(!li) return;
     li.remove();
   }
 
-  rename(id, name, type) {
+  rename(id, name) {
     this.options();
-    let li = this.item(id, type);
+    let li = this.item(id);
     if(!li) return;
     let new_id = id.slice(0, id.lastIndexOf("/")+1) + name;
     this.$('.sc-name', li).innerHTML = name;
@@ -3345,9 +3297,9 @@ class StaircaseCore {
     this.ajax(full_ids);
   }
 
-  select(id, type, callback) {
+  select(id, callback) {
     this.options();
-    let el = this.item(id, type);
+    let el = this.item(id);
     let data = this.setData(el);
       
     this.removeActive();
@@ -3357,9 +3309,11 @@ class StaircaseCore {
     this.callback('select', data);
   }
 
-  deselect() {
+  deselect(callback) {
     this.options();
     this.removeActive();
+
+    if(!callback) return;
     this.callback('select');
   }
 
@@ -3368,16 +3322,14 @@ class StaircaseCore {
   }
 
   dirname(path) {
-    return this.trimSlashes(path.match(/.*\//)[0]);
+    let dirname = path.match(/.*\//);
+    if(dirname && dirname.length) return this.trimSlashes(dirname[0]);
+    return '/';
   }
 
-  item(id, type) {
-    let selector = '';
-    if(id === '/') {
-      selector = this.o.selector + '[data-sc-name="/"]';
-    } else {
-      selector = this.o.selector + ' [data-sc-name="' + id + '"][data-sc-type="' + type + '"]';
-    }
+  item(id) {
+    let selector = this.o.selector;
+    selector += (id === '/') ? '[data-sc-name="/"]' : ' [data-sc-name="' + id + '"]';
     return this.$(selector);
   }
 
@@ -3411,9 +3363,8 @@ class StaircaseCore {
     });
   }
 
-  append(base, name, type) {
-    let li = this.createLi(name);
-    let id = this.trimSlashes(base + '/' + name);
+  append(id, type) {
+    let li = this.createLi(this.basename(id));
     li.dataset.scType = type;
     li.dataset.scName = id;
     return li;
@@ -3429,24 +3380,30 @@ class StaircaseCore {
   }
 
   // Create list
-  createList(array, parentName) {
+  createList(base, array) {
     let ul = document.createElement('ul'); 
     let data = this.toFilesFolders(array);
 
     this.children(ul);
 
     data.folders.forEach((item) => {
-      let li = this.append(parentName, item, 'folder');
+      let join = this.join(base, item);
+      let li = this.append(join, 'folder');
       ul.appendChild(li);
     });
 
     data.files.forEach((item) => {
-      let li = this.append(parentName, item, 'file');
+      let join = this.join(base, item);
+      let li = this.append(join, 'file');
       ul.appendChild(li);
     });
 
     return ul;
   };
+
+  join(folder, file) {
+    return this.trimSlashes(folder + '/' + file);
+  }
 
   createLi(item) {
     let li = document.createElement('li');
