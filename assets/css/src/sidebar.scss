@@ -11,7 +11,7 @@ aside {
   .filebar {
     background: #ddd;
     display: flex;
-    justify-content: flex-end;
+    //justify-content: flex-end;
     min-height: 2.5rem;
     border-bottom: 1px solid #ccc;
     padding: 0 .5rem;
@@ -23,6 +23,10 @@ aside {
       display: flex;
       list-style: none;
       align-items: center;
+
+      &:first-child {
+        margin-right: auto;
+      }
 
       li {
         padding: 0 .5rem;

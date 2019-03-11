@@ -58,7 +58,7 @@ function defaults() {
     'revisions.max' => 2,
     'sidebar.width' => 300,
     'spellcheck' => false,
-    '.root.path' => __DIR__ . '/../',
+    '.root.path' => __DIR__ . '/..',
   ]);
 }
 

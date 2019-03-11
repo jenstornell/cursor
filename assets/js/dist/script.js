@@ -1,6 +1,6 @@
 class Fullscreen {
   init() {
-    this.events();
+    //this.events();
   }
 
   events() {
@@ -62,8 +62,8 @@ function isJson(str) {
   return true;
 }
 class Render {
-  constructor() {
-
+  constructor(params) {
+    this.options = params.options;
   }
 
   init() {
@@ -79,7 +79,7 @@ class Render {
 
   onKeyUp() {
     $('textarea').addEventListener('keyup', (e) => {
-      this.toPreview();
+      this.toPreview(this.options['root.url']);
       this.updateCounter();
       this.updatePending();
     });
@@ -121,10 +121,14 @@ class Render {
     $('.filesize').innerHTML = filesize;
   }
 
-  toPreview() {
-    $('.preview').innerHTML = marked($('textarea').value, {
-      baseUrl: 'test'
+  toPreview(root) {
+    let folder = (buffer_id !== '') ? staircase.dirname(buffer_id) : '/';
+    let value = $('textarea').value;
+    let base = staircase.join(root + '/api/image', folder) + '/';
+    let markdown = marked(value, {
+      baseUrl: base
     });
+    $('.preview').innerHTML = markdown;
   }
 }
 class FileAdd {
@@ -231,7 +235,9 @@ class FileDelete {
   ajax() {
     let path = this.root + '/api/file/delete';
     let data = {};
-    let id = $('[data-sc-type="file"][data-sc-active]').dataset.scName;
+    let selector = $('[data-sc-type="file"][data-sc-active]');
+    if(!selector) return;
+    let id = selector.dataset.scName;
     data.id = id;
 
     fetch(path, {
@@ -260,11 +266,34 @@ class FileDelete {
     });
   }
 }
+class Logout {
+  constructor(params) {
+    this.root = params.root;
+    this.options = params.options;
+  }
+
+  init() {
+    this.events();
+  }
+
+  events() {
+    this.onClick();
+  }
+
+  onClick() {
+    $('.filebar .logout').addEventListener('click', (e) => {
+      if(!confirm('Are you sure you want to logout?')) return;
+
+      window.location.href = this.root + '/login/?logout';
+    });
+  }
+}
 class FileRead {
   constructor(params) {
     this.render = params.render;
     this.root = params.root;
     this.message = params.message;
+    this.options = options;
   }
 
   get(id) {
@@ -306,7 +335,7 @@ class FileRead {
           buffer_type = 'file';
 
           if(results.type == 'md') {
-            this.toMarkdown(id, results);
+            this.toMarkdown(results);
           } else if(results.type == 'image') {
             this.toImage(id, results);
           }
@@ -323,12 +352,12 @@ class FileRead {
     });
   }
 
-  toMarkdown(id, results) {
+  toMarkdown(results) {
     let textarea = $('.editor textarea');
           
     textarea.value = results.text;
     latest = textarea.value;
-    this.render.toPreview();
+    this.render.toPreview(this.options['root.url']);
 
     $('body').dataset.state = 'markdown';
 
@@ -562,10 +591,10 @@ class FileUpload {
         return response.text();
     })
     .then((text) => {
-      let results = JSON.parse(text);
       if(!isJson(text)) {
         message.open(false, text);
       } else {
+        let results = JSON.parse(text);
         if(!results.success) {
           message.open(false, results.message);
         } else {
@@ -740,7 +769,9 @@ class FolderDelete {
   ajax() {
     let path = this.root + '/api/folder/delete';
     let data = {};
-    let id = $('[data-sc-type="folder"][data-sc-active]').dataset.scName;
+    let selector = $('[data-sc-type="file"][data-sc-active]');
+    if(!selector) return;
+    let id = selector.dataset.scName;
     data.id = id;
 
     fetch(path, {
@@ -844,6 +875,7 @@ class FolderRead {
 
         if(type == 'file') {
           this.fileread.get(id);
+          buffer_id = id;
           staircase.open(staircase.dirname(id));
         } else {
           this.get(id);
@@ -3050,62 +3082,41 @@ document.addEventListener('DOMContentLoaded', () => {
   let base = new MessageBase();
   base.init();
 });
-class staircase {
-  static add(id, type) {
-    let staircase = new StaircaseCore();
-    staircase.add(id, type);
+const staircase = {
+  add(id, type) {
+    new StaircaseCore().add(id, type);
+  },
+  delete(id) {
+    new StaircaseCore().delete(id);
+  },
+  rename(id, name) {
+    new StaircaseCore().rename(id, name);
+  },
+  select(id, callback = true) {
+    new StaircaseCore().select(id, callback);
+  },
+  deselect(callback = true) {
+    new StaircaseCore().deselect(callback);
+  },
+  open(id) {
+    new StaircaseCore().open(id);
+  },
+  close(id) {
+    new StaircaseCore().close(id);
+  },
+  refresh(id) {
+    new StaircaseCore().refresh(id);
+  },
+  join(base, item) {
+    return new StaircaseCore().join(base, item);
+  },
+  basename(id) {
+    return new StaircaseCore().basename(id);
+  },
+  dirname(id) {
+    return new StaircaseCore().dirname(id);
   }
-
-  static delete(id) {
-    let staircase = new StaircaseCore();
-    staircase.delete(id);
-  }
-
-  static rename(id, name) {
-    let staircase = new StaircaseCore();
-    staircase.rename(id, name);
-  }
-
-  static select(id, callback = true) {
-    let staircase = new StaircaseCore();
-    staircase.select(id, callback);
-  }
-
-  static deselect(id, callback = true) {
-    let staircase = new StaircaseCore();
-    staircase.deselect(id, callback);
-  }
-
-  static open(id) {
-    let staircase = new StaircaseCore();
-    staircase.open(id);
-  }
-
-  static close(id) {
-    let staircase = new StaircaseCore();
-    staircase.close(id);
-  }
-
-  static refresh(id) {
-    let staircase = new StaircaseCore();
-    staircase.refresh(id);
-  }
-
-  static join(base, item) {
-    let staircase = new StaircaseCore();
-    return staircase.join(base, item);
-  }
-
-  static basename(id) {
-    let staircase = new StaircaseCore();
-    return staircase.basename(id);
-  }
-
-  static dirname(id) {
-    let staircase = new StaircaseCore();
-    return staircase.dirname(id);
-  }
-}
+};
 class StaircaseCore {
   options() {
     let selector = this.$('body').dataset.staircaseSelector;
@@ -3148,6 +3159,17 @@ class StaircaseCore {
 
     if(current.dataset.scChildren !== undefined) {
       this.state(current, 'open');
+
+      if(this.goal_id === id && this.type == 'open') {
+        let args = {};
+        args.id = id;
+        args.success = true;
+        args.element = current;
+        this.callback('open', args);
+        this.type = null;
+        this.goal_id = null;
+      }
+
       if(!rest.length) return;
       this.ajax(rest);
       return;
@@ -3180,10 +3202,17 @@ class StaircaseCore {
       } else {
         args.success = false;
       }
+
       if(args.id == '/') {
         this.callback('load', args);
       } else {
         this.callback('toggle', args);
+      }
+
+      if(this.goal_id === id && this.type == 'open') {
+        this.callback('open', args);
+        this.type = null;
+        this.goal_id = null;
       }
 
       if(args.success) {
@@ -3285,6 +3314,9 @@ class StaircaseCore {
 
   open(id) {
     this.options();
+    this.goal_id = id;
+    this.type = 'open';
+
     let ids = id.split('/');
     let append = '';
     let full_ids = [];
@@ -3547,7 +3579,7 @@ class StaircaseCore {
   // Remove active
   removeActive() {
     this.options();
-    let elements = this.$$(this.o.selector + ' li');
+    let elements = this.$$(this.o.selector + '[data-sc-active], ' + this.o.selector + ' [data-sc-active]');
 
     elements.forEach(function(element) {
         delete element.dataset.scActive;

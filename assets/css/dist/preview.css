@@ -8,6 +8,9 @@
   line-height: 1.5;
   padding: 1.5rem 4rem;
   overflow-wrap: break-word; }
+  .preview img {
+    max-width: 100%;
+    vertical-align: bottom; }
   .preview ul,
   .preview ol {
     padding-left: 2rem;

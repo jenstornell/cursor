@@ -254,7 +254,6 @@ aside {
   aside .filebar {
     background: #ddd;
     display: flex;
-    justify-content: flex-end;
     min-height: 2.5rem;
     border-bottom: 1px solid #ccc;
     padding: 0 .5rem;
@@ -268,6 +267,8 @@ aside {
       display: flex;
       list-style: none;
       align-items: center; }
+      aside .filebar ul:first-child {
+        margin-right: auto; }
       aside .filebar ul li {
         padding: 0 .5rem;
         height: 2rem;

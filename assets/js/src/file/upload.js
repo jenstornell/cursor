@@ -78,10 +78,10 @@ class FileUpload {
         return response.text();
     })
     .then((text) => {
-      let results = JSON.parse(text);
       if(!isJson(text)) {
         message.open(false, text);
       } else {
+        let results = JSON.parse(text);
         if(!results.success) {
           message.open(false, results.message);
         } else {

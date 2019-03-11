@@ -1,0 +1,137 @@
+* {
+  padding: 0;
+  margin: 0; }
+
+html,
+body {
+  height: 100%; }
+
+body {
+  background: #eee;
+  display: flex;
+  justify-content: center;
+  align-items: center; }
+
+form {
+  padding: 4rem; }
+  form .logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 2rem;
+    opacity: .1; }
+    form .logo svg {
+      width: 128px; }
+  form label,
+  form input {
+    font-family: arial;
+    color: #333;
+    font-size: 1rem; }
+  form label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: .5rem; }
+  form .input {
+    display: flex;
+    justify-items: center;
+    align-items: center;
+    background: #fff;
+    flex-direction: row;
+    border: 2px solid #ddd;
+    margin-bottom: 1.5rem; }
+    form .input:focus-within {
+      border: 2px solid #007bff; }
+    form .input input {
+      padding: 0 1rem;
+      height: 3rem;
+      border: none; }
+      form .input input:focus {
+        outline: 2px solid #007bff;
+        outline: none; }
+    form .input figure {
+      height: 3rem;
+      background-color: #f5f5f5;
+      display: flex;
+      justify-items: center;
+      align-items: center;
+      padding: 0 1rem; }
+      form .input figure svg {
+        height: 24px;
+        width: 24px; }
+  form input[type="submit"] {
+    background: #333;
+    color: #fff;
+    border: none;
+    border-radius: .3rem;
+    width: 100%;
+    height: 3rem; }
+    form input[type="submit"]:hover, form input[type="submit"]:focus {
+      outline: none;
+      background: #000; }
+  form p {
+    margin-bottom: 1.5rem; }
+
+.message {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  padding: 1rem;
+  text-align: center;
+  color: #fff;
+  font-family: arial;
+  display: none; }
+  .message.loggedin {
+    background: #333;
+    color: #ccc;
+    display: none;
+    padding: 0; }
+    .message.loggedin .text {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding-left: 1rem; }
+      .message.loggedin .text figure {
+        display: flex;
+        margin-right: 1rem; }
+        .message.loggedin .text figure svg {
+          height: 24px;
+          width: 24px; }
+    .message.loggedin > :first-child {
+      margin-right: auto; }
+    .message.loggedin > :last-child {
+      margin-left: auto; }
+    .message.loggedin .right {
+      display: flex; }
+      .message.loggedin .right a {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #fff;
+        text-decoration: none;
+        padding: .5rem 1rem;
+        background: #444;
+        box-sizing: border-box;
+        margin: .5rem; }
+        .message.loggedin .right a:first-child {
+          margin-right: 0; }
+          .message.loggedin .right a:first-child:hover {
+            background: #0063cc; }
+        .message.loggedin .right a:last-child:hover {
+          background: #dc3848; }
+        .message.loggedin .right a svg {
+          height: 24px;
+          width: 24px;
+          margin-right: .5rem; }
+    .message.loggedin.show {
+      display: flex; }
+  .message.error {
+    background: #dc3848;
+    text-align: center; }
+    .message.error figure {
+      padding: 0 1rem; }
+      .message.error figure svg {
+        width: 24px;
+        height: 24px; }
+    .message.error.show {
+      display: flex;
+      align-items: center; }

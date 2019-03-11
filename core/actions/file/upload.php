@@ -4,7 +4,7 @@ class FileUpload {
     $this->file = $_FILES['file'];
     $this->id = $id;
     $this->overwrite = $overwrite;
-    $this->path = trim(option('project.path') . '/' . $id, '/') . '/' . $this->file['name'];
+    $this->path = rtrim(option('project.path') . '/' . $id, '/') . '/' . $this->file['name'];
   }
 
   function upload() {

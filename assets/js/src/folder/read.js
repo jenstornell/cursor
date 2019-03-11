@@ -74,6 +74,7 @@ class FolderRead {
 
         if(type == 'file') {
           this.fileread.get(id);
+          buffer_id = id;
           staircase.open(staircase.dirname(id));
         } else {
           this.get(id);

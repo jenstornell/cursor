@@ -3,6 +3,7 @@ class FileRead {
     this.render = params.render;
     this.root = params.root;
     this.message = params.message;
+    this.options = options;
   }
 
   get(id) {
@@ -44,7 +45,7 @@ class FileRead {
           buffer_type = 'file';
 
           if(results.type == 'md') {
-            this.toMarkdown(id, results);
+            this.toMarkdown(results);
           } else if(results.type == 'image') {
             this.toImage(id, results);
           }
@@ -61,12 +62,12 @@ class FileRead {
     });
   }
 
-  toMarkdown(id, results) {
+  toMarkdown(results) {
     let textarea = $('.editor textarea');
           
     textarea.value = results.text;
     latest = textarea.value;
-    this.render.toPreview();
+    this.render.toPreview(this.options['root.url']);
 
     $('body').dataset.state = 'markdown';
 

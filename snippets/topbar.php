@@ -8,11 +8,14 @@
     </li>
   </ul>
   <ul>
+  <?php /*
     <li class="fullscreen">
       <img src="<?= option('root.url'); ?>/assets/images/remixicon/fullscreen-line.svg">
       <label>
         Fullscreen
       </label>
     </li>
+    */
+    ?>
   </ul>
 </div>

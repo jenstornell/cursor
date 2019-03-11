@@ -14,7 +14,9 @@ class FileDelete {
   ajax() {
     let path = this.root + '/api/file/delete';
     let data = {};
-    let id = $('[data-sc-type="file"][data-sc-active]').dataset.scName;
+    let selector = $('[data-sc-type="file"][data-sc-active]');
+    if(!selector) return;
+    let id = selector.dataset.scName;
     data.id = id;
 
     fetch(path, {

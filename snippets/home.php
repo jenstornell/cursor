@@ -60,7 +60,15 @@ $json = json_encode(option());
 
   let options = <?= $json; ?>;
   let fullscreen = new Fullscreen();
-  let render = new Render();
+
+  let logout = new Logout({
+    root: '<?= option('root.url'); ?>',
+    options: options,
+  });
+
+  let render = new Render({
+    options: options,
+  });
   let save = new Save({
     render: render,
     root: '<?= option('root.url'); ?>',
@@ -69,6 +77,7 @@ $json = json_encode(option());
   let fileread = new FileRead({
     render: render,
     root: '<?= option('root.url'); ?>',
+    options: options,
   });
   let folderread = new FolderRead({
     render: render,
@@ -101,6 +110,7 @@ $json = json_encode(option());
     root: '<?= option('root.url'); ?>',
   });
 
+  logout.init();
   save.init();
   filefolder_rename.init();
   fileadd.init();
@@ -127,6 +137,9 @@ $json = json_encode(option());
       } else if(args.type == 'folder') {
         folderread.get(args.id);
       }
+    }
+    open(params) {
+      staircase.select(buffer_id);
     }
   }
   render.init();

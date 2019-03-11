@@ -1,6 +1,6 @@
 class Fullscreen {
   init() {
-    this.events();
+    //this.events();
   }
 
   events() {

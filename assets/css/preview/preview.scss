@@ -10,6 +10,11 @@
   padding: 1.5rem 4rem;
   overflow-wrap: break-word;
 
+  img {
+    max-width: 100%;
+    vertical-align: bottom;
+  }
+
   ul,
   ol {
     padding-left: 2rem;

@@ -40,6 +40,17 @@ class StaircaseCore {
 
     if(current.dataset.scChildren !== undefined) {
       this.state(current, 'open');
+
+      if(this.goal_id === id && this.type == 'open') {
+        let args = {};
+        args.id = id;
+        args.success = true;
+        args.element = current;
+        this.callback('open', args);
+        this.type = null;
+        this.goal_id = null;
+      }
+
       if(!rest.length) return;
       this.ajax(rest);
       return;
@@ -72,10 +83,17 @@ class StaircaseCore {
       } else {
         args.success = false;
       }
+
       if(args.id == '/') {
         this.callback('load', args);
       } else {
         this.callback('toggle', args);
+      }
+
+      if(this.goal_id === id && this.type == 'open') {
+        this.callback('open', args);
+        this.type = null;
+        this.goal_id = null;
       }
 
       if(args.success) {
@@ -177,6 +195,9 @@ class StaircaseCore {
 
   open(id) {
     this.options();
+    this.goal_id = id;
+    this.type = 'open';
+
     let ids = id.split('/');
     let append = '';
     let full_ids = [];
@@ -439,7 +460,7 @@ class StaircaseCore {
   // Remove active
   removeActive() {
     this.options();
-    let elements = this.$$(this.o.selector + ' li');
+    let elements = this.$$(this.o.selector + '[data-sc-active], ' + this.o.selector + ' [data-sc-active]');
 
     elements.forEach(function(element) {
         delete element.dataset.scActive;

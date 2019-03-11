@@ -1,6 +1,6 @@
 class Render {
-  constructor() {
-
+  constructor(params) {
+    this.options = params.options;
   }
 
   init() {
@@ -16,7 +16,7 @@ class Render {
 
   onKeyUp() {
     $('textarea').addEventListener('keyup', (e) => {
-      this.toPreview();
+      this.toPreview(this.options['root.url']);
       this.updateCounter();
       this.updatePending();
     });
@@ -58,9 +58,13 @@ class Render {
     $('.filesize').innerHTML = filesize;
   }
 
-  toPreview() {
-    $('.preview').innerHTML = marked($('textarea').value, {
-      baseUrl: 'test'
+  toPreview(root) {
+    let folder = (buffer_id !== '') ? staircase.dirname(buffer_id) : '/';
+    let value = $('textarea').value;
+    let base = staircase.join(root + '/api/image', folder) + '/';
+    let markdown = marked(value, {
+      baseUrl: base
     });
+    $('.preview').innerHTML = markdown;
   }
 }

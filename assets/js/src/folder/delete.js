@@ -14,7 +14,9 @@ class FolderDelete {
   ajax() {
     let path = this.root + '/api/folder/delete';
     let data = {};
-    let id = $('[data-sc-type="folder"][data-sc-active]').dataset.scName;
+    let selector = $('[data-sc-type="file"][data-sc-active]');
+    if(!selector) return;
+    let id = selector.dataset.scName;
     data.id = id;
 
     fetch(path, {
