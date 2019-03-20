@@ -1,6 +1,7 @@
 <?php
+return include __DIR__ . '/options-test.php';
 return [
-  'root.url' => 'http://localhost/misc/markia',
+  'root.url' => 'https://example.com',
   'root.path' => __DIR__,
   'spellcheck' => false,
   'project' => [

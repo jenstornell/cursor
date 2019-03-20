@@ -65,7 +65,8 @@
 
 .editor {
   display: flex;
-  justify-content: flex-end; }
+  justify-content: flex-end;
+  height: 100%; }
   .editor [data-editor-width] {
     width: 100%; }
   .editor textarea {
