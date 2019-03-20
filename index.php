@@ -5,7 +5,10 @@ include __DIR__ . '/login/core/knock/knock.php';
 
 setOptions();
 
-if(!knock::isLoggedIn()) {
+$options = include __DIR__ . '/login/options.php';
+$knock = new Knock($options);
+
+if(!$knock->isLoggedIn()) {
   header('Location: ' . option('root.url') . '/login/');
   die;
 }

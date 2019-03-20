@@ -47,7 +47,7 @@ function script() {
 
 function watch(){
   gulp.watch(css.src, style);
-  gulp.watch(js.src, script);
+  //gulp.watch(js.src, script);
 }
 
 exports.css = style;

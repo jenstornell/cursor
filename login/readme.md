@@ -2,7 +2,7 @@
 
 A simple PHP login form with authorization.
 
-*Version 1.0* - [Changelog](changelog.md)
+*Version 1.3* - [Changelog](changelog.md)
 
 ![Screenshot](screenshot.png)
 
@@ -22,10 +22,12 @@ The folder structure may look like below where filename should be `[username].ph
 Inside the user file you return the password. To use the password `test` you need to hash it with a tool like [SHA256 Hash Generator](https://passwordsgenerator.net/sha256-hash-generator/).
 
 ```php
-<?php return '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08';
+<?php return [
+  'password' => '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08',
+];
 ```
 
-*You can also use `<?php return hash('sha256', 'test');`, but it's not recommended. Use it for testing purpose only!*
+*You can also use `<?php return ['password' => hash('sha256', 'test')];`, but it's not recommended. Use it for testing purpose only!*
 
 ## Options
 
@@ -52,6 +54,8 @@ You can see the additional options below.
 
 | Name                      | Type   | Default                                       | Description                                                             |
 | ------------------------- | ------ | --------------------------------------------- | ----------------------------------------------------------------------- |
+| `cookie.hash.key`         | string | `'hash'`                                      | Change this to make the cookie a bit more cryptic.                      |
+| `cookie.username.key`     | string | `'username'`                                  | Change this to make the cookie a bit more cryptic.                      |
 | `redirect.url`            | string | null                                          | The url that the login form should redirect to after a successful login |
 | `text.login`              | string | `'Login'`                                     | The login button text                                                   |
 | `text.login.error`        | string | `'Something went wrong. Try again!'`          | The message if something goes wrong on login                            |
@@ -61,6 +65,8 @@ You can see the additional options below.
 | `text.password`           | string | `'Password'`                                  | The password label in the form                                          |
 | `text.visit`              | string | `'Visit'`                                     | The visit button text. The visit button goes to the redirected url      |
 | `text.username`           | string | `'Username'`                                  | The username label in the form                                          |
+| `prefill.username`        | string | `''`                                          | Prefills the username into the form. For testing purposes only          |
+| `prefill.password`        | string | `''`                                          | Prefills the password into the form. For testing purposes only          |
 
 ## Libraries used
 

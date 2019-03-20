@@ -1,6 +1,6 @@
 <?php
-class WallTinyOptions {
-  public $scope = 'default';
+class KnockOptions {
+  public $scope = 'knock';
 
   public function setDefaults($defaults) {
     global $tiny_options;
@@ -46,10 +46,10 @@ class WallTinyOptions {
 
 // HELPERS
 
-class walloption {
+class knocko {
   // option::set()
   public static function set($input, $value = null) {
-    $TinyOptions = new WallTinyOptions();
+    $TinyOptions = new KnockOptions();
 
     if(is_string($input)) {
       $name = $input;
@@ -63,7 +63,7 @@ class walloption {
 
   // option::unset()
   public static function unset($data) {
-    $TinyOptions = new WallTinyOptions();
+    $TinyOptions = new KnockOptions();
 
     if(is_string($data)) {
       $TinyOptions->unsetString($data);
@@ -74,13 +74,13 @@ class walloption {
 
   // options::default
   public static function default($defaults) {
-    $TinyOptions = new WallTinyOptions();
+    $TinyOptions = new KnockOptions();
     $TinyOptions->setDefaults($defaults);
   }
 }
 
 // option::get()
-function walloption($name = null, $fallback = null) {
-  $TinyOptions = new WallTinyOptions();
+function knocko($name = null, $fallback = null) {
+  $TinyOptions = new KnockOptions();
   return $TinyOptions->get($name, $fallback);
 }
