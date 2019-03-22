@@ -96,6 +96,8 @@ class Render {
     let dirpath = id.split("/").slice(0,-1).join("/");
     if(dirpath) {
       $('[data-path] span').innerHTML = dirpath + '/';
+    } else {
+      $('[data-path] span').innerHTML = '';
     }
     $('[data-path] input').value = filename;
   }
@@ -131,74 +133,6 @@ class Render {
     $('.preview').innerHTML = markdown;
   }
 }
-class FilefolderDelete {
-  constructor(params) {
-    this.root = params.root;
-    this.options = params.options;
-    this.filedelete = new FileDelete({
-      root: this.root,
-      options: this.options,
-    });
-    this.folderdelete = new FolderDelete({
-      root: this.root,
-      options: this.options,
-    });
-  }
-
-  init() {
-    this.events();
-  }
-
-  events() {
-    this.onClick();
-  }
-
-  onClick() {
-    $('.filebar .delete').addEventListener('click', (e) => {
-      if($('[data-sc-type="file"][data-sc-active]')) {
-        this.filedelete.delete();
-      } else {
-        this.folderdelete.delete();
-      }
-    });
-  }
-}
-class FilefolderRename {
-  constructor(params) {
-    this.root = params.root;
-    this.options = params.options;
-    this.filerename = new FileRename({
-      root: this.root,
-      options: this.options,
-    });
-    this.folderrename = new FolderRename({
-      root: this.root,
-      options: this.options,
-    });
-  }
-
-  init() {
-    this.events();
-  }
-
-  events() {
-    this.onChange();
-  }
-
-  onChange() {
-    $('.topbar .path input').addEventListener('keyup', (e) => {
-      if(e.code == 'Enter') {
-        e.target.blur();
-
-        if($('[data-sc-type="file"][data-sc-active]')) {
-          this.filerename.rename();
-        } else if($('[data-sc-type="folder"][data-sc-active]')) {
-          this.folderrename.rename();
-        }
-      }
-    });
-  }
-}
 class FileAdd {
   constructor(params) {
     this.root = params.root;
@@ -222,11 +156,14 @@ class FileAdd {
   add() {
     let pending = typeof document.body.dataset.pending !== 'undefined' ? true : false;
     if(pending) {
-      if(!confirm('The current file has not been saved. Load anyway?')) {
+      console.log('1');
+      if(!confirm('Add: The current file has not been saved. Load anyway?')) {
         if(buffer_id === '') return;
 
+        console.log(buffer_id);
+
         staircase.removeActive();
-        staircase.select(buffer_id, buffer_type, false);
+        staircase.select(buffer_id);
         return;
       }
     }
@@ -280,8 +217,18 @@ class FileAdd {
 
           let join = staircase.join(id, results.filename);
           staircase.add(join, 'file');
+
           delete $('body').dataset.pending;
           delete $('ms-box').dataset.open;
+
+          action = 'file/add';
+          buffer_id = join;
+
+          let item = $('[data-sc-name="' + buffer_id + '"] .sc-name');
+          if(item) {
+            item.scrollIntoView({behavior: 'smooth'});
+            staircase.select(join);
+          }
         }
       }
     });
@@ -364,10 +311,10 @@ class FileRead {
     this.options = options;
   }
 
-  get(id) {
+  get(id, confirm = true) {
     let pending = typeof document.body.dataset.pending !== 'undefined' ? true : false;
     if(pending) {
-      if(!confirm('The current file has not been saved. Load anyway?')) {
+      if(confirm && !confirm('Read file: The current file has not been saved. Load anyway?')) {
         if(buffer_id === '') return;
 
         staircase.select(buffer_id, false);
@@ -679,6 +626,74 @@ class FileUpload {
     $('#upload').value = '';
   }
 }
+class FilefolderDelete {
+  constructor(params) {
+    this.root = params.root;
+    this.options = params.options;
+    this.filedelete = new FileDelete({
+      root: this.root,
+      options: this.options,
+    });
+    this.folderdelete = new FolderDelete({
+      root: this.root,
+      options: this.options,
+    });
+  }
+
+  init() {
+    this.events();
+  }
+
+  events() {
+    this.onClick();
+  }
+
+  onClick() {
+    $('.filebar .delete').addEventListener('click', (e) => {
+      if($('[data-sc-type="file"][data-sc-active]')) {
+        this.filedelete.delete();
+      } else {
+        this.folderdelete.delete();
+      }
+    });
+  }
+}
+class FilefolderRename {
+  constructor(params) {
+    this.root = params.root;
+    this.options = params.options;
+    this.filerename = new FileRename({
+      root: this.root,
+      options: this.options,
+    });
+    this.folderrename = new FolderRename({
+      root: this.root,
+      options: this.options,
+    });
+  }
+
+  init() {
+    this.events();
+  }
+
+  events() {
+    this.onChange();
+  }
+
+  onChange() {
+    $('.topbar .path input').addEventListener('keyup', (e) => {
+      if(e.code == 'Enter') {
+        e.target.blur();
+
+        if($('[data-sc-type="file"][data-sc-active]')) {
+          this.filerename.rename();
+        } else if($('[data-sc-type="folder"][data-sc-active]')) {
+          this.folderrename.rename();
+        }
+      }
+    });
+  }
+}
 class FolderAdd {
   constructor(params) {
     this.root = params.root;
@@ -748,6 +763,15 @@ class FolderAdd {
           let join = staircase.join(id, results.name);
           staircase.add(join, 'folder');
           delete $('ms-box').dataset.open;
+
+          action = 'folder/add';
+          buffer_id = join;
+
+          let item = $('[data-sc-name="' + buffer_id + '"] .sc-name');
+          if(item) {
+            item.scrollIntoView({behavior: 'smooth'});
+            staircase.select(join);
+          }
         }
       }
     });
@@ -763,13 +787,14 @@ class FolderDelete {
     if(!confirm('Delete the current folder?')) return;
     message.open('loading', {autohide: false});
     $('ms-box').dataset.autohide = '';
+    console.log('path');
     this.ajax();
   }
 
   ajax() {
     let path = this.root + '/api/folder/delete';
     let data = {};
-    let selector = $('[data-sc-type="file"][data-sc-active]');
+    let selector = $('[data-sc-type="folder"][data-sc-active]');
     if(!selector) return;
     let id = selector.dataset.scName;
     data.id = id;
@@ -782,11 +807,10 @@ class FolderDelete {
         return response.text();
     })
     .then((text) => {
-      let results = JSON.parse(text);
-
       if(!isJson(text)) {
         message.open(false, text);
       } else {
+        let results = JSON.parse(text);
         if(!results.success) {
           message.open(false, results.message);
         } else {
@@ -807,10 +831,10 @@ class FolderRead {
     this.message = params.message;
   }
 
-  get(id) {
+  get(id, confirm = true) {
     let pending = typeof document.body.dataset.pending !== 'undefined' ? true : false;
     if(pending) {
-      if(!confirm('The current file has not been saved. Load anyway?')) {
+      if(confirm && !confirm('Read folder: The current file has not been saved. Load anyway?')) {
         if(buffer_id === '') return;
 
         staircase.select(buffer_id, false);
@@ -924,6 +948,7 @@ class FolderRename {
     })
     .then((text) => {
       message.open(false, text);
+
       let results = JSON.parse(text);
 
       if(!isJson(text)) {
@@ -934,6 +959,13 @@ class FolderRename {
         } else {
           staircase.rename(results.old_id, results.new_name);
           message.open();
+
+          let dirname = staircase.dirname(results.old_id);
+          let join = staircase.join(dirname, results.new_name);
+
+          buffer_id = join;
+
+          staircase.refresh(join);
         }
       }
     });

@@ -26,6 +26,7 @@ class FolderRename {
     })
     .then((text) => {
       message.open(false, text);
+
       let results = JSON.parse(text);
 
       if(!isJson(text)) {
@@ -36,6 +37,13 @@ class FolderRename {
         } else {
           staircase.rename(results.old_id, results.new_name);
           message.open();
+
+          let dirname = staircase.dirname(results.old_id);
+          let join = staircase.join(dirname, results.new_name);
+
+          buffer_id = join;
+
+          staircase.refresh(join);
         }
       }
     });

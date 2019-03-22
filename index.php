@@ -13,6 +13,8 @@ if(!$knock->isLoggedIn()) {
   die;
 }
 
+$knock->keepAlive();
+
 include __DIR__ . '/core/snippet.php';
 include __DIR__ . '/core/routes/actions.php';
 include __DIR__ . '/core/routes/image.php';

@@ -2,6 +2,10 @@
 namespace Knock;
 
 class Cookie {
+  public function __construct() {
+    #$this->Login = new Login();
+  }
+
   // Get cookie
   public function getCookie($key) {
     return (isset($_COOKIE[knocko('cookie_prefix')][knocko('key_' . $key)])) ? $_COOKIE[knocko('cookie_prefix')][knocko('key_' . $key)] : null;
@@ -65,13 +69,18 @@ class Cookie {
   }
 
   // Refresh the cookies if the cookies will soon expire
-  public function keepAlive() {
-    return ($this->ExpireTimeLeft(knocko('cookie_refresh')) < 0) ? $this->refresh() : true;
+  public function keepAlive($login) {
+    return ($this->ExpireTimeLeft(knocko('cookie_refresh')) < 0) ? $this->refresh($login) : true;
+  }
+
+  public function refresh($login) {
+    if(!$login->isLoggedIn()) return;
+    $login->loginUser($this->getCookie('cookie_username'));
   }
 
   // Expire timeleft - MISSING FUNCTION getCookieExpires
   private function ExpireTimeLeft($refresh) {
-    $minutes = round(((int)$this->getCookieExpires()-time())/60);
+    $minutes = round(((int)$this->getCookie('cookie_expires')-time())/60);
     $diff = $minutes - $refresh;
     return $diff;
   }

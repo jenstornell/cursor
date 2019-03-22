@@ -6,10 +6,10 @@ class FileRead {
     this.options = options;
   }
 
-  get(id) {
+  get(id, confirm = true) {
     let pending = typeof document.body.dataset.pending !== 'undefined' ? true : false;
     if(pending) {
-      if(!confirm('The current file has not been saved. Load anyway?')) {
+      if(confirm && !confirm('Read file: The current file has not been saved. Load anyway?')) {
         if(buffer_id === '') return;
 
         staircase.select(buffer_id, false);

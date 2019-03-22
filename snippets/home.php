@@ -133,12 +133,26 @@ $json = json_encode(option());
     }
     select(args) {
       if(args.type == 'file') {
-        fileread.get(args.id);
+        if(action === 'file/add') {
+          action = '';
+          fileread.get(args.id, false);
+        } else {
+          fileread.get(args.id);
+        }
       } else if(args.type == 'folder') {
-        folderread.get(args.id);
+        if(action === 'folder/add') {
+          action = '';
+          folderread.get(args.id, false);
+        } else {
+          folderread.get(args.id);
+        }
       }
     }
     open(params) {
+      if(action === 'file/add') {
+        let item = $('[data-sc-name="' + buffer_id + '"] .sc-name');
+        item.scrollIntoView({behavior: 'smooth'});
+      }
       staircase.select(buffer_id);
     }
   }

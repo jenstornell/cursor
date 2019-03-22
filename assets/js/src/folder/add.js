@@ -67,6 +67,15 @@ class FolderAdd {
           let join = staircase.join(id, results.name);
           staircase.add(join, 'folder');
           delete $('ms-box').dataset.open;
+
+          action = 'folder/add';
+          buffer_id = join;
+
+          let item = $('[data-sc-name="' + buffer_id + '"] .sc-name');
+          if(item) {
+            item.scrollIntoView({behavior: 'smooth'});
+            staircase.select(join);
+          }
         }
       }
     });

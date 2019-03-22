@@ -3,7 +3,7 @@ namespace Knock;
 use KnockException;
 
 class Login {
-  public function __construct($Core) {
+  public function __construct($Core = null) {
     $this->Auth = new Authorization();
     $this->Cookie = new Cookie();
     $this->File = new File();

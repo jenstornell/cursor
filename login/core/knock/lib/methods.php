@@ -49,10 +49,8 @@ class Knock {
 
   // Refresh the cookies, creates new hash and expire timestamp
   public function refresh() {
-    if(!$this->Login->isLoggedIn()) return;
-
     try {
-      $this->Login->loginUser($this->Cookie->getCookie('cookie_username'));
+      $this->Cookie->refresh($this->Login);
       return $this->success();
     } catch(KnockException $e) {
       return $this->error($e);
@@ -78,7 +76,7 @@ class Knock {
 
   // Keep alive
   public function keepAlive() {
-    return $this->Cookie->keepAlive();
+    return $this->Cookie->keepAlive($this->Login);
   }
 
   // PRIVATE

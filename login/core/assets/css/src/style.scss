@@ -32,7 +32,7 @@ form {
 
   label,
   input {
-    font-family: arial;
+    font-family: 'Roboto', sans-serif;
     color: #333;
     font-size: 1rem;
   }
@@ -109,7 +109,7 @@ form {
   padding: 1rem;
   text-align: center;
   color: #fff;
-  font-family: arial;
+  font-family: 'Roboto', sans-serif;
   display: none;
 
   &.loggedin {

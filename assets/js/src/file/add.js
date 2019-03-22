@@ -21,11 +21,14 @@ class FileAdd {
   add() {
     let pending = typeof document.body.dataset.pending !== 'undefined' ? true : false;
     if(pending) {
-      if(!confirm('The current file has not been saved. Load anyway?')) {
+      console.log('1');
+      if(!confirm('Add: The current file has not been saved. Load anyway?')) {
         if(buffer_id === '') return;
 
+        console.log(buffer_id);
+
         staircase.removeActive();
-        staircase.select(buffer_id, buffer_type, false);
+        staircase.select(buffer_id);
         return;
       }
     }
@@ -79,8 +82,18 @@ class FileAdd {
 
           let join = staircase.join(id, results.filename);
           staircase.add(join, 'file');
+
           delete $('body').dataset.pending;
           delete $('ms-box').dataset.open;
+
+          action = 'file/add';
+          buffer_id = join;
+
+          let item = $('[data-sc-name="' + buffer_id + '"] .sc-name');
+          if(item) {
+            item.scrollIntoView({behavior: 'smooth'});
+            staircase.select(join);
+          }
         }
       }
     });

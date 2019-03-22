@@ -33,6 +33,8 @@ class Render {
     let dirpath = id.split("/").slice(0,-1).join("/");
     if(dirpath) {
       $('[data-path] span').innerHTML = dirpath + '/';
+    } else {
+      $('[data-path] span').innerHTML = '';
     }
     $('[data-path] input').value = filename;
   }

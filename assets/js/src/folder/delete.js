@@ -8,13 +8,14 @@ class FolderDelete {
     if(!confirm('Delete the current folder?')) return;
     message.open('loading', {autohide: false});
     $('ms-box').dataset.autohide = '';
+    console.log('path');
     this.ajax();
   }
 
   ajax() {
     let path = this.root + '/api/folder/delete';
     let data = {};
-    let selector = $('[data-sc-type="file"][data-sc-active]');
+    let selector = $('[data-sc-type="folder"][data-sc-active]');
     if(!selector) return;
     let id = selector.dataset.scName;
     data.id = id;
@@ -27,11 +28,10 @@ class FolderDelete {
         return response.text();
     })
     .then((text) => {
-      let results = JSON.parse(text);
-
       if(!isJson(text)) {
         message.open(false, text);
       } else {
+        let results = JSON.parse(text);
         if(!results.success) {
           message.open(false, results.message);
         } else {
