@@ -1,0 +1,59 @@
+.CodeMirror {
+  width: 100%;
+  height: 100%;
+  font-family: roboto !important;
+  line-height: 1.5;
+  color: #333 !important;
+}
+
+.CodeMirror-lines {
+  padding: 1.5rem 4rem !important;
+}
+
+.cm-header-1 {
+  margin-bottom: 2rem;
+  font-size: 2em;
+  color: #333 !important;
+  font-weight: bold;
+}
+
+.cm-header-2 {
+  line-height: 1.5;
+  margin-bottom: 1rem;
+  color: #333 !important;
+  font-size: 1.5em;
+}
+
+.cm-header-3 {
+  line-height: 1.5;
+  margin-bottom: 1rem;
+  font-size: 1.17em;
+  color: #333 !important;
+}
+
+.cm-header-5 {
+  line-height: 1.5;
+  margin-bottom: 1rem;
+  font-size: 0.83em;
+  color: #333 !important;
+}
+
+.cm-header-4 {
+  color: #333 !important;
+}
+
+.cm-s-default .cm-link {
+  color: #0367d8 !important;
+}
+
+.cm-s-default .cm-string {
+  color: #d80303 !important;
+}
+
+.cm-s-default .cm-variable-2 {
+  color: #333 !important;
+}
+
+.CodeMirror-vscrollbar {
+  outline: none !important;
+}

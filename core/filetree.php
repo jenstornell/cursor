@@ -1,6 +1,11 @@
 <?php
 include __DIR__ . '/helpers.php';
+include __DIR__ . '/../login/core/knock/knock.php';
 setOptions();
+
+$options = include __DIR__ . '/../login/options.php';
+$knock = new Knock($options);
+$userdata = include($knock->getUserpath());
 
 $post = json_decode(file_get_contents('php://input'), true);
 
@@ -22,6 +27,23 @@ if($glob) {
         $data[] = basename($item);
       }
     } elseif(is_dir($item)) {
+      $allowed = true;
+
+      if(isset($userdata['access']['folders'])) {
+        $allowed = false;
+
+        foreach($userdata['access']['folders'] as $folder) {
+          $match = $root . '/' . $folder;
+          if(substr($match, -1) == '*') {
+            if(startsWith(substr($match, 0, -1), $item)) {
+              $allowed = true;
+            }
+          }
+        }
+      }
+
+      if(!$allowed) continue;
+
       $hide_revisions = option('revisions.hide');
       $is_revisions = option('revisions.folder') === basename($item);
 

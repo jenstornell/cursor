@@ -26,6 +26,7 @@ class FileAdd {
         if(buffer_id === '') return;
 
         console.log(buffer_id);
+        action = 'file/add/abort';
 
         staircase.removeActive();
         staircase.select(buffer_id);

@@ -12,9 +12,13 @@ return [
     //'top' => false,
     //'bottom' => false
   ],
+  'background_color' => '#000',
   'autosave' => 50,
   'revisions' => [
-    //'max' => false,
-    'hide' => false
+    'max' => 2,
+    'hide' => true
+  ],
+  'login' => [
+    'setcookie_secure' => false,
   ]
 ];

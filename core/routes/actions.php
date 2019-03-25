@@ -27,13 +27,12 @@ routes([
     include option('.route.path') . '/file/save.php';
     include option('.route.path') . '/file/revision.php';
   
-    $file_save = new FileSave(option('.route.post'));
     $file_revision = new FileRevision(option('.route.post'));
-  
+    $file_save = new FileSave(option('.route.post'));
+
+    $file_revision->save();
     $file_save->save();
     echo $file_save->get();
-  
-    $file_revision->save();
     die;
   },
   'api/file/upload' => function() {

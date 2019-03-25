@@ -15,7 +15,7 @@ class Render {
   }
 
   onKeyUp() {
-    $('textarea').addEventListener('keyup', (e) => {
+    editor.on('keyup', (e) => {
       this.toPreview(this.options['root.url']);
       this.updateCounter();
       this.updatePending();
@@ -23,9 +23,13 @@ class Render {
   }
 
   updateCounter() {
-    Countable.count($('.editor textarea'), counter => {
-      $('.count').innerHTML = counter.words + ' words, ' + counter.all + ' chars ';
-    });
+    let code = editor.getValue();
+    code = code.replace(/(\r\n|\n|\r)/gm, ' ');
+
+    let char_count = code.length;
+    let word_count = code.split(' ').filter(function(n) { return n != '' }).length;
+
+    $('.count').innerHTML = word_count + ' words, ' + char_count + ' chars ';
   }
 
   updateFilepath(id) {
@@ -40,7 +44,7 @@ class Render {
   }
 
   updatePending() {
-    let value = $('.editor textarea').value;
+    let value = editor.getValue();
     if(value === latest) {
       delete document.body.dataset.pending;
     } else {
@@ -60,9 +64,13 @@ class Render {
     $('.filesize').innerHTML = filesize;
   }
 
+  updateRevisionsCount(revisions_count) {
+    $('.revisions_count').innerHTML = 'Revisions: ' + revisions_count;
+  }
+
   toPreview(root) {
     let folder = (buffer_id !== '') ? staircase.dirname(buffer_id) : '/';
-    let value = $('textarea').value;
+    let value = editor.getValue();
     let base = staircase.join(root + '/api/image', folder) + '/';
     let markdown = marked(value, {
       baseUrl: base

@@ -23,6 +23,9 @@ const staircase = {
   refresh(id) {
     new StaircaseCore().refresh(id);
   },
+  removeActive() {
+    new StaircaseCore().removeActive();
+  },
   join(base, item) {
     return new StaircaseCore().join(base, item);
   },

@@ -7,10 +7,30 @@ class KnockOptions {
     $tiny_options[$this->scope]['defaults'] = $defaults;
   }
 
-  private function getDefault($name) {
+  private function getItem($name, $type) {
     global $tiny_options;
-    if(isset($tiny_options[$this->scope]['defaults'][$name]))
-      return $tiny_options[$this->scope]['defaults'][$name];
+    if(isset($tiny_options[$this->scope][$type][$name]))
+      return $tiny_options[$this->scope][$type][$name];
+  }
+
+  private function defaults() {
+    return $this->collection('defaults');
+  }
+
+  private function options() {
+    return $this->collection('options');
+  }
+
+  private function collection($type) {
+    global $tiny_options;
+
+    $collection = [];
+
+    if(isset($tiny_options[$this->scope][$type])) {
+      $collection = $tiny_options[$this->scope][$type];
+    }
+
+    return (!empty($collection)) ? $collection : [];
   }
 
   public function set($name, $value) {
@@ -18,29 +38,46 @@ class KnockOptions {
     $tiny_options[$this->scope]['options'][$name] = $value;
   }
 
-  public function get($name = null, $fallback = null) {
+  public function get($name, $fallback = null) {
+    return ($name) ? $this->single($name, $fallback) : $this->all();
+  }
+
+  private function all() {
+    return array_merge($this->defaults(), $this->options());
+  }
+
+  private function single($name, $fallback) {
     global $tiny_options;
 
-    if(!$name) {
-      $merge = array_merge($tiny_options[$this->scope]['defaults'], $tiny_options[$this->scope]['options']);
-      return $merge;
+    $option = $this->getItem($name, 'options');
+
+    if($option) {
+      $value = $option;
+    } elseif(isset($fallback)) {
+      $value = $fallback;
+    } else {
+      $value = $this->getItem($name, 'defaults');
     }
-    
-    if(isset($tiny_options[$this->scope]['options'][$name])) return $tiny_options[$this->scope]['options'][$name];
-    if(isset($fallback)) return $fallback;
-    return $this->getDefault($name);
+    return $value;
   }
 
   public function unsetString($name) {
     global $tiny_options;
 
-    if(isset($tiny_options[$this->scope]['options'][$name])) unset($tiny_options[$this->scope]['options'][$name]);
+    if(isset($tiny_options[$this->scope]['options'][$name])) {
+      unset($tiny_options[$this->scope]['options'][$name]);
+    }
   }
 
   public function unsetArray($names) {
     foreach($names as $name) {
       $this->unsetString($name);
     }
+  }
+
+  public function unsetAll() {
+    global $tiny_options;
+    unset($tiny_options[$this->scope]['options']);
   }
 }
 
@@ -62,13 +99,15 @@ class knocko {
   }
 
   // option::unset()
-  public static function unset($data) {
+  public static function unset($data = null) {
     $TinyOptions = new KnockOptions();
 
     if(is_string($data)) {
       $TinyOptions->unsetString($data);
     } elseif(is_array($data)) {
       $TinyOptions->unsetArray($data);
+    } else {
+      $TinyOptions->unsetAll();
     }
   }
 

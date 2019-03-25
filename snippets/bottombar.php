@@ -6,6 +6,7 @@
     </li>
   </ul>
   <ul>
+  <li class="revisions_count state"></li>
     <li class="dimensions state"></li>
     <li class="filesize state"></li>
     <li class="timestamp state"></li>

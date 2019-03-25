@@ -16,7 +16,7 @@ class Save {
     let data = {};
     let id = $('[data-sc-active]').dataset.scName;
     data.id = id;
-    data.text = $('.editor textarea').value;
+    data.text = editor.getValue();
 
     fetch(path, {
       method: 'post',
@@ -33,15 +33,18 @@ class Save {
         if(!results.success) {
           message.open(false, results.message);
         } else {
-          latest = $('.editor textarea').value;
+          latest = editor.getValue();
           this.render.updatePending();
           this.render.updateTimestamp(results.timestamp);
+          this.render.updateRevisionsCount(results.revisions_count);
 
           let join = staircase.join(staircase.dirname(id), options['revisions.folder'] + '/' + staircase.basename(id));
-          let revision_id = staircase.join(staircase.dirname(id), this.options['revisions.folder']);
-
           staircase.refresh(join);
-          staircase.add(revision_id, 'folder');
+
+          if(this.options['revisions.hide'] !== true) {
+            let revision_id = staircase.join(staircase.dirname(id), this.options['revisions.folder']);
+            staircase.add(revision_id, 'folder');
+          }
 
           message.open();
           this.resetTimeout();

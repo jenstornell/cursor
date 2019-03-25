@@ -6,10 +6,10 @@ class FileRead {
     this.options = options;
   }
 
-  get(id, confirm = true) {
+  get(id, question = true) {
     let pending = typeof document.body.dataset.pending !== 'undefined' ? true : false;
     if(pending) {
-      if(confirm && !confirm('Read file: The current file has not been saved. Load anyway?')) {
+      if(question && !confirm('Read file: The current file has not been saved. Load anyway?')) {
         if(buffer_id === '') return;
 
         staircase.select(buffer_id, false);
@@ -46,13 +46,16 @@ class FileRead {
 
           if(results.type == 'md') {
             this.toMarkdown(results);
+            editor.refresh();
           } else if(results.type == 'image') {
             this.toImage(id, results);
           }
 
           if(results.type == 'md' || results.type == 'image') {
-            render.updateFilepath(id);
-            render.updateFilesize(results.filesize);
+            this.render.updateFilepath(id);
+            this.render.updateFilesize(results.filesize);
+            this.render.updateRevisionsCount(results.revisions_count);
+            this.render.updateCounter();
 
             delete $('body').dataset.pending;
             delete $('ms-box').dataset.open;
@@ -63,10 +66,8 @@ class FileRead {
   }
 
   toMarkdown(results) {
-    let textarea = $('.editor textarea');
-          
-    textarea.value = results.text;
-    latest = textarea.value;
+    latest = editor.getValue();
+    editor.setValue(results.text);
     this.render.toPreview(this.options['root.url']);
 
     $('body').dataset.state = 'markdown';

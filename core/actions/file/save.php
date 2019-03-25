@@ -40,9 +40,20 @@ class FileSave {
   }
 
   function success() {
+    $revisions_count = 0;
+
+    if((int)option('revisions.max') > 1) {
+      $revisions_path = dirname($this->filepath) . '/' . option('revisions.folder') . '/' . $this->id;
+
+      if(file_exists($revisions_path)) {
+        $revisions_count = count(scandir($revisions_path))-2;
+      }
+    }
+
     $this->json = [
       'success' => true,
       'timestamp' => date('H:i:s'),
+      'revisions_count' => $revisions_count
     ];
     $this->output = json_encode($this->json);
   }

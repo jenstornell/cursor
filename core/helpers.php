@@ -44,6 +44,7 @@ function defaults() {
   option::default([
     'autosave' => true,
     'autosave.interval' => 15,
+    'background_color'=> '#243c61',
     'bar.bottom' => true,
     'bar.top' => true,
     'editor.width' => 900,
@@ -86,4 +87,9 @@ function is_dir_empty($dir) {
     }
   }
   return TRUE;
+}
+
+function startsWith($needle, $haystack) {
+  $length = strlen($needle);
+  return (substr($haystack, 0, $length) === $needle);
 }

@@ -44,3 +44,14 @@ main {
   position: fixed;
   border-radius: 100vh;
 }
+
+[data-background-color="false"] {
+  padding: 0;
+
+  aside,
+  aside .filebar,
+  .topbar,
+  .bottombar {
+    border-radius: 0;
+  }
+}

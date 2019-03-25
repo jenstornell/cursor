@@ -29,7 +29,8 @@
   .preview h3 {
     margin-bottom: 1rem; }
   .preview p,
-  .preview blockquote {
+  .preview blockquote,
+  .preview iframe {
     font-size: 17px;
     margin-bottom: 1.5em; }
   .preview a {
@@ -44,7 +45,8 @@
   .preview pre {
     background: #eee;
     padding: 1rem;
-    margin-bottom: 2rem; }
+    margin-bottom: 2rem;
+    overflow-x: auto; }
     .preview pre code {
       padding: 0; }
   .preview code {

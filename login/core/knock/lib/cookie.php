@@ -2,10 +2,6 @@
 namespace Knock;
 
 class Cookie {
-  public function __construct() {
-    #$this->Login = new Login();
-  }
-
   // Get cookie
   public function getCookie($key) {
     return (isset($_COOKIE[knocko('cookie_prefix')][knocko('key_' . $key)])) ? $_COOKIE[knocko('cookie_prefix')][knocko('key_' . $key)] : null;

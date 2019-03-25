@@ -1,13 +1,27 @@
-.scrollbar::-webkit-scrollbar {
-  width: 16px;
+.scrollbar::-webkit-scrollbar,
+.CodeMirror-vscrollbar::-webkit-scrollbar,
+.preview pre::-webkit-scrollbar {
+  width: 16px !important;
 }
 
-.scrollbar::-webkit-scrollbar-thumb {
-  background-color: #babac0;
-  border-radius: 16px;
-  border: 4px solid #fff;
+.scrollbar::-webkit-scrollbar-thumb,
+.CodeMirror-vscrollbar::-webkit-scrollbar-thumb,
+.preview pre::-webkit-scrollbar-thumb {
+  background-color: #babac0 !important;
+  border-radius: 16px !important;
+  border: 4px solid #fff !important;
 }
 
-.scrollbar::-webkit-scrollbar-button {
-  display: none;
+.preview pre::-webkit-scrollbar-thumb {
+  border: 4px solid #eee !important;
+}
+
+aside .scrollbar::-webkit-scrollbar-thumb {
+  border: 4px solid #eee !important;
+}
+
+.scrollbar::-webkit-scrollbar-button,
+.CodeMirror-vscrollbar::-webkit-scrollbar-button,
+.preview pre::-webkit-scrollbar-button {
+  display: none !important;
 }

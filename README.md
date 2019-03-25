@@ -1,4 +1,4 @@
-# Markia
+# Cursor
 
 ## Options
 
@@ -46,6 +46,7 @@ return [
 
 ## Libries used
 
+- [Codemirror](https://github.com/codemirror/CodeMirror) - Brings syntax hightlighting to the textarea.
 - [Remixicon](https://remixicon.com/) - A special thanks to [xiaochunjimmy](https://github.com/xiaochunjimmy) for not only providing a beautiful icon pack with 24px icons, but also for making custom designed 18px icons for this project.
 - [staircase.js](https://github.com/jenstornell/staircase.js) - Used for the filetree in the sidebar.
 - [Countable](https://github.com/RadLikeWhoa/Countable) - Counter for words and characters.
@@ -75,7 +76,7 @@ Before it's relased it will be free. Hopefully all the bugs can be fixed before 
 ### When released
 
 - Try first, buy later.
-- I will probably go for a price of around 25 USD / EUR.
+- A license will cost around 25 USD / EUR.
 - You will own the license for life.
-- The license can not be resold because it's personal.
+- The license cannot be resold because it's personal.
 - Support will not be included, but you can add issues in case of trouble.

@@ -40,7 +40,7 @@ class Core {
   }
 
   // Set options
-  private function options($options) {
+  public function options($options) {
     knocko::default($this->defaults());
 
     if($options) {

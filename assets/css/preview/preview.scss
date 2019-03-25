@@ -43,7 +43,8 @@
   }
 
   p,
-  blockquote {
+  blockquote,
+  iframe {
     font-size: 17px;
     margin-bottom: 1.5em;
   }
@@ -67,6 +68,7 @@
     background: #eee;
     padding: 1rem;
     margin-bottom: 2rem;
+    overflow-x: auto;
 
     code {
       padding: 0;

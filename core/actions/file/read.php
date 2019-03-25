@@ -42,11 +42,22 @@ class FileRead {
   }
 
   function successMarkdown() {
+    $revisions_count = 0;
+
+    if((int)option('revisions.max') > 1) {
+      $revisions_path = dirname($this->filepath) . '/' . option('revisions.folder') . '/' . $this->id;
+
+      if(file_exists($revisions_path)) {
+        $revisions_count = count(scandir($revisions_path))-2;
+      }
+    }
+
     $this->json = [
       'message' => 'The file ' . $this->id . ' loaded successfully!',
       'text' => $this->content,
       'type' => 'md',
       'filesize' => humanFilesize(filesize($this->filepath)),
+      'revisions_count' => $revisions_count,
     ];
     $this->output(true);
   }

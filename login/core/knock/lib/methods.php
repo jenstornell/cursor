@@ -49,20 +49,39 @@ class Knock {
 
   // Refresh the cookies, creates new hash and expire timestamp
   public function refresh() {
+    if(!$this->Login->isLoggedIn()) return;
+
     try {
-      $this->Cookie->refresh($this->Login);
+      $this->Login->loginUser($this->Cookie->getCookie('cookie_username'));
       return $this->success();
     } catch(KnockException $e) {
       return $this->error($e);
     }
   }
 
-  // BOOLEAN
-  
+  // STRING/INT
+
   // Get the cookies expire timestamp
   public function getCookieExpires() {
     return $this->Cookie->getCookie('cookie_expires');
   }
+
+  // Get all options
+  public function getOptions() {
+    return knocko();
+  }
+
+  // Get username
+  public function getUsername() {
+    return $this->Cookie->getCookie('cookie_username');
+  }
+
+  // Get userpath
+  public function getUserpath() {
+    return realpath(knocko('path_users') . '/' . $this->Cookie->getCookie('cookie_username') . '.php');
+  }
+
+  // BOOLEAN
 
   // is authorized
   public function isAuthorized() {

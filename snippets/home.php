@@ -3,15 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-
-<?php /*
-  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900&amp;text=0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ%C3%85%C3%84%C3%96abcdefghijklmnopqrstuvwxyz%C3%A5%C3%A4%C3%B6%C3%A9+-%21%3F%22%2C.%25%2F%28%29%40%26" rel="stylesheet">
-  */
-  ?>
   
   <link rel="icon" href="">
 
-  <title>Markia</title>
+  <title>Cursor</title>
   
   <link rel="stylesheet" href="<?= option('root.url'); ?>/assets/css/dist/style.css?t=<?= time(); ?>">
   <link rel="stylesheet" href="<?= option('project.css', option('root.url') . '/assets/css/dist/preview.css?t=' . time()); ?>">
@@ -23,8 +18,13 @@
   ?>
 
   <?= '<style>' . $preview_width . $editor_width . $sidebar_width . '</style>'; ?>
+  <style>
+    body {
+      background: <?= option('background_color'); ?>;
+    }
+  </style>
 </head>
-<body data-state="welcome" data-staircase-selector="stair-case">
+<body data-state="welcome" data-staircase-selector="stair-case" data-background-color="<?= ((bool)option('background_color')) ? 'true' : 'false'; ?>">
   <div class="pending"></div>
   <?= snippet('aside'); ?>
   <main>
@@ -136,6 +136,8 @@ $json = json_encode(option());
         if(action === 'file/add') {
           action = '';
           fileread.get(args.id, false);
+        } else if(action == 'file/add/abort') {
+          fileread.get(args.id, false);
         } else {
           fileread.get(args.id);
         }
@@ -157,6 +159,16 @@ $json = json_encode(option());
     }
   }
   render.init();
+</script>
+
+<script>
+  var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+    mode: 'markdown',
+    lineNumbers: false,
+    lineWrapping: true,
+    theme: "default",
+    extraKeys: {"Enter": "newlineAndIndentContinueMarkdownList"},
+  });
 </script>
 </body>
 </html>
