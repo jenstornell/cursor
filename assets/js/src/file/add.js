@@ -21,11 +21,9 @@ class FileAdd {
   add() {
     let pending = typeof document.body.dataset.pending !== 'undefined' ? true : false;
     if(pending) {
-      console.log('1');
       if(!confirm('Add: The current file has not been saved. Load anyway?')) {
         if(buffer_id === '') return;
 
-        console.log(buffer_id);
         action = 'file/add/abort';
 
         staircase.removeActive();

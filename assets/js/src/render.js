@@ -15,7 +15,7 @@ class Render {
   }
 
   onKeyUp() {
-    editor.on('keyup', (e) => {
+    editor.on('change', (e) => {
       this.toPreview(this.options['root.url']);
       this.updateCounter();
       this.updatePending();
@@ -45,6 +45,7 @@ class Render {
 
   updatePending() {
     let value = editor.getValue();
+
     if(value === latest) {
       delete document.body.dataset.pending;
     } else {
@@ -53,19 +54,19 @@ class Render {
   }
 
   updateTimestamp(timestamp) {
-    $('.timestamp').innerHTML = 'saved ' + timestamp;
+    $('.timestamp').innerHTML = '<strong>Saved:</strong> ' + timestamp;
   }
 
   updateDimensions(dimensions) {
-    $('.dimensions').innerHTML = dimensions;
+    $('.dimensions').innerHTML = '<strong>Dimensions:</strong> ' + dimensions;
   }
 
   updateFilesize(filesize) {
-    $('.filesize').innerHTML = filesize;
+    $('.filesize').innerHTML = '<strong>Filesize:</strong> ' + filesize;
   }
 
   updateRevisionsCount(revisions_count) {
-    $('.revisions_count').innerHTML = 'Revisions: ' + revisions_count;
+    $('.revisions_count').innerHTML = '<strong>Revisions:</strong> ' + revisions_count;
   }
 
   toPreview(root) {

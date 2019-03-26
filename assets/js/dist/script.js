@@ -78,7 +78,7 @@ class Render {
   }
 
   onKeyUp() {
-    editor.on('keyup', (e) => {
+    editor.on('change', (e) => {
       this.toPreview(this.options['root.url']);
       this.updateCounter();
       this.updatePending();
@@ -108,6 +108,7 @@ class Render {
 
   updatePending() {
     let value = editor.getValue();
+
     if(value === latest) {
       delete document.body.dataset.pending;
     } else {
@@ -116,19 +117,19 @@ class Render {
   }
 
   updateTimestamp(timestamp) {
-    $('.timestamp').innerHTML = 'saved ' + timestamp;
+    $('.timestamp').innerHTML = '<strong>Saved:</strong> ' + timestamp;
   }
 
   updateDimensions(dimensions) {
-    $('.dimensions').innerHTML = dimensions;
+    $('.dimensions').innerHTML = '<strong>Dimensions:</strong> ' + dimensions;
   }
 
   updateFilesize(filesize) {
-    $('.filesize').innerHTML = filesize;
+    $('.filesize').innerHTML = '<strong>Filesize:</strong> ' + filesize;
   }
 
   updateRevisionsCount(revisions_count) {
-    $('.revisions_count').innerHTML = 'Revisions: ' + revisions_count;
+    $('.revisions_count').innerHTML = '<strong>Revisions:</strong> ' + revisions_count;
   }
 
   toPreview(root) {
@@ -139,504 +140,6 @@ class Render {
       baseUrl: base
     });
     $('.preview').innerHTML = markdown;
-  }
-}
-class FileAdd {
-  constructor(params) {
-    this.root = params.root;
-    this.options = params.options;
-  }
-
-  init() {
-    this.events();
-  }
-
-  events() {
-    this.onClick();
-  }
-
-  onClick() {
-    $('.filebar .add-file').addEventListener('click', (e) => {
-      this.add();
-    });
-  }
-
-  add() {
-    let pending = typeof document.body.dataset.pending !== 'undefined' ? true : false;
-    if(pending) {
-      console.log('1');
-      if(!confirm('Add: The current file has not been saved. Load anyway?')) {
-        if(buffer_id === '') return;
-
-        console.log(buffer_id);
-        action = 'file/add/abort';
-
-        staircase.removeActive();
-        staircase.select(buffer_id);
-        return;
-      }
-    }
-    message.open('loading', {autohide: false});
-    $('ms-box').dataset.autohide = '';
-    this.ajax();
-  }
-
-  newId(id, filename) {
-    return (id == '/') ? filename : id + '/' + filename;
-  }
-
-  ajax() {
-    let path = this.root + '/api/file/add';
-    let data = {};
-    let folder = $('[data-sc-type="folder"][data-sc-active]');
-    let id = '/';
-
-    if(folder) {
-      id = folder.dataset.scName;
-    } else {
-      let file = $('[data-sc-type="file"][data-sc-active]');
-      if(file) {
-        folder = file.closest('[data-sc-type="folder"]');
-        if(folder) {
-          id = folder.dataset.scName;
-        }
-      }
-    }
-
-    data.id = id;
-
-    fetch(path, {
-      method: 'post',
-      body: JSON.stringify(data),
-    })
-    .then((response) => {
-        return response.text();
-    })
-    .then((text) => {
-      let results = JSON.parse(text);
-      if(!isJson(text)) {
-        message.open(false, text);
-      } else {
-        if(!results.success) {
-          message.open(false, results.message);
-        } else {
-          if(id !== '/') {
-            staircase.open(id);
-          }
-
-          let join = staircase.join(id, results.filename);
-          staircase.add(join, 'file');
-
-          delete $('body').dataset.pending;
-          delete $('ms-box').dataset.open;
-
-          action = 'file/add';
-          buffer_id = join;
-
-          let item = $('[data-sc-name="' + buffer_id + '"] .sc-name');
-          if(item) {
-            item.scrollIntoView({behavior: 'smooth'});
-            staircase.select(join);
-          }
-        }
-      }
-    });
-  }
-}
-class FileDelete {
-  constructor(params) {
-    this.root = params.root;
-    this.options = params.options;
-  }
-
-  delete() {
-    if(!confirm('Delete the current file and the current file revisions?')) return;
-    message.open('loading', {autohide: false});
-    $('ms-box').dataset.autohide = '';
-    this.ajax();
-  }
-
-  ajax() {
-    let path = this.root + '/api/file/delete';
-    let data = {};
-    let selector = $('[data-sc-type="file"][data-sc-active]');
-    if(!selector) return;
-    let id = selector.dataset.scName;
-    data.id = id;
-
-    fetch(path, {
-      method: 'post',
-      body: JSON.stringify(data),
-    })
-    .then((response) => {
-        return response.text();
-    })
-    .then((text) => {
-      if(!isJson(text)) {
-        message.open(false, text);
-      } else {
-        let results = JSON.parse(text);
-        if(!results.success) {
-          message.open(false, results.message);
-        } else {
-          staircase.delete(id);
-          staircase.delete(results.revisions_id);
-          staircase.select(staircase.dirname(id));
-
-          delete $('ms-box').dataset.open;
-          delete $('body').dataset.pending;
-        }
-      }
-    });
-  }
-}
-class Logout {
-  constructor(params) {
-    this.root = params.root;
-    this.options = params.options;
-  }
-
-  init() {
-    this.events();
-  }
-
-  events() {
-    this.onClick();
-  }
-
-  onClick() {
-    $('.filebar .logout').addEventListener('click', (e) => {
-      if(!confirm('Are you sure you want to logout?')) return;
-
-      window.location.href = this.root + '/login/?logout';
-    });
-  }
-}
-class FileRead {
-  constructor(params) {
-    this.render = params.render;
-    this.root = params.root;
-    this.message = params.message;
-    this.options = options;
-  }
-
-  get(id, question = true) {
-    let pending = typeof document.body.dataset.pending !== 'undefined' ? true : false;
-    if(pending) {
-      if(question && !confirm('Read file: The current file has not been saved. Load anyway?')) {
-        if(buffer_id === '') return;
-
-        staircase.select(buffer_id, false);
-        return;
-      }
-    }
-    message.open('loading', {autohide: false});
-    $('ms-box').dataset.autohide = '';
-    this.ajax(id);
-  }
-
-  ajax(id) {
-    let path = this.root + '/api/file/read';
-    let data = {};
-    data.id = id;
-
-    fetch(path, {
-      method: 'post',
-      body: JSON.stringify(data),
-    })
-    .then((response) => {
-        return response.text();
-    })
-    .then((text) => {
-      if(!isJson(text)) {
-        message.open(false, text);
-      } else {
-        let results = JSON.parse(text);
-        if(!results.success) {
-          message.open(false, results.message);
-        } else {
-          buffer_id = id;
-          buffer_type = 'file';
-
-          if(results.type == 'md') {
-            this.toMarkdown(results);
-            editor.refresh();
-          } else if(results.type == 'image') {
-            this.toImage(id, results);
-          }
-
-          if(results.type == 'md' || results.type == 'image') {
-            this.render.updateFilepath(id);
-            this.render.updateFilesize(results.filesize);
-            this.render.updateRevisionsCount(results.revisions_count);
-            this.render.updateCounter();
-
-            delete $('body').dataset.pending;
-            delete $('ms-box').dataset.open;
-          }
-        }
-      }
-    });
-  }
-
-  toMarkdown(results) {
-    latest = editor.getValue();
-    editor.setValue(results.text);
-    this.render.toPreview(this.options['root.url']);
-
-    $('body').dataset.state = 'markdown';
-
-    render.updateCounter();
-  }
-
-  toImage(id, results) {
-    $('body').dataset.state = 'image';
-    $('.image img').setAttribute('src' , results.url);
-
-    render.updateDimensions(results.dimensions);
-  }
-}
-class FileRename {
-  constructor(params) {
-    this.root = params.root;
-    this.options = params.options;
-  }
-
-  rename() {
-    message.open('loading', {autohide: false});
-    this.ajax();
-  }
-
-  ajax() {
-    let path = this.root + '/api/file/rename';
-    let data = {};
-    data.id = $('[data-sc-active]').dataset.scName;
-    data.filename = $('[data-path] input').value;
-
-    message.open('loading', {autohide: false});
-
-    fetch(path, {
-      method: 'post',
-      body: JSON.stringify(data),
-    })
-    .then((response) => {
-        return response.text();
-    })
-    .then((text) => {
-      message.open(false, text);
-
-      let results = JSON.parse(text);
-
-      if(!isJson(text)) {
-        message.open(false, text);
-      } else {
-        if(!results.success) {
-          message.open(false, results.message);
-        } else {
-          staircase.rename(results.old_id, results.new_filename);
-          staircase.rename(results.old_revision, results.new_filename);
-          message.open();
-        }
-      }
-    });
-  }
-}
-class Save {
-  constructor(params) {
-    this.render = params.render;
-    this.root = params.root;
-    this.options = params.options;
-    this.time = this.time();
-  }
-
-  init() {
-    this.events();
-    this.startTimeout();
-  }
-
-  ajax() {
-    let path = this.root + '/api/file/save';
-    let data = {};
-    let id = $('[data-sc-active]').dataset.scName;
-    data.id = id;
-    data.text = editor.getValue();
-
-    fetch(path, {
-      method: 'post',
-      body: JSON.stringify(data),
-    })
-    .then((response) => {
-        return response.text();
-    })
-    .then((text) => {
-      if(!isJson(text)) {
-        message.open(false, text);
-      } else {
-        let results = JSON.parse(text);
-        if(!results.success) {
-          message.open(false, results.message);
-        } else {
-          latest = editor.getValue();
-          this.render.updatePending();
-          this.render.updateTimestamp(results.timestamp);
-          this.render.updateRevisionsCount(results.revisions_count);
-
-          let join = staircase.join(staircase.dirname(id), options['revisions.folder'] + '/' + staircase.basename(id));
-          staircase.refresh(join);
-
-          if(this.options['revisions.hide'] !== true) {
-            let revision_id = staircase.join(staircase.dirname(id), this.options['revisions.folder']);
-            staircase.add(revision_id, 'folder');
-          }
-
-          message.open();
-          this.resetTimeout();
-          this.startTimeout();
-        }
-      }
-    });
-  }
-
-  events() {
-    this.onCtrlS();
-  }
-
-  onCtrlS() {
-    window.addEventListener('keydown', (e) => {
-      if(!e.ctrlKey) return;
-      if(e.code !== 'KeyS') return;
-      e.preventDefault();
-      this.save();
-    });
-  }
-
-  time() {
-    if(!options['autosave']) return false;
-    return options['autosave.interval'] * 1000;
-  }
-
-  startTimeout() {
-    if(!this.time) return;
-    this.clock = setTimeout(() => {
-      this.save();
-    },this.time);
-  }
-
-  resetTimeout() {
-    clearTimeout(this.clock);
-  }
-
-  save() {
-    if(!this.allowed()) {
-      this.startTimeout();
-    } else {
-      message.open('loading', {autohide: false});
-      this.ajax();
-    }
-  }
-
-  allowed() {
-    return typeof document.body.dataset.pending !== 'undefined';
-  }
-}
-class FileUpload {
-  constructor(params) {
-    this.root = params.root;
-    this.options = params.options;
-  }
-
-  init() {
-    this.events();
-  }
-
-  events() {
-    this.onClick();
-    this.onChange();
-  }
-
-  onClick() {
-    $('.filebar .upload-file').addEventListener('click', (e) => {
-      this.upload();
-    });
-  }
-
-  onChange() {
-    $('#upload').addEventListener('change', (e) => {
-      message.open('loading', {autohide: false});
-      $('ms-box').dataset.autohide = '';
-      this.ajax(e.target.files[0]);
-    });
-  }
-
-  upload() {
-    $('#upload').click();
-  }
-
-  ajax(file) {
-    let path = this.root + '/api/file/upload';
-    let data = new FormData();
-
-    let folder = $('[data-sc-type="folder"][data-sc-active]');
-    let id = '/';
-
-    if(folder) {
-      id = folder.dataset.scName;
-    } else {
-      let file = $('[data-sc-type="file"][data-sc-active]');
-      if(file) {
-        folder = file.closest('[data-sc-type="folder"]');
-        if(folder) {
-          id = folder.dataset.scName;
-        }
-      }
-    }
-
-    let match = '';
-    let overwrite = false;
-
-    if(id !== '/') {
-      match = $('[data-sc-type="file"][data-sc-name="' + id + '/' + file.name + '"]');
-    } else {
-      match = $('[data-sc-type="file"][data-sc-name="' + file.name + '"]');
-    }
-
-    if(match) {
-      overwrite = confirm('The file already exists. Overwrite it?');
-      if(!overwrite) return;
-    }
-    
-    data.append('file', file, file.name);
-    data.append('id', id);
-    data.append('overwrite', overwrite);
-
-    let options = {
-      method: 'post',
-      body: data,
-    };
-
-    fetch(path, options)
-    .then((response) => {
-        return response.text();
-    })
-    .then((text) => {
-      if(!isJson(text)) {
-        message.open(false, text);
-      } else {
-        let results = JSON.parse(text);
-        if(!results.success) {
-          message.open(false, results.message);
-        } else {
-          let join = staircase.join(id, file.name);
-          staircase.add(join, 'file');
-          this.resetInput();
-          delete $('ms-box').dataset.open;
-        }
-      }
-    });
-  }
-
-  resetInput() {
-    $('#upload').value = '';
   }
 }
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
@@ -11771,6 +11274,502 @@ if (!CodeMirror.mimeModes.hasOwnProperty("text/html"))
   CodeMirror.defineMIME("text/html", {name: "xml", htmlMode: true});
 
 });
+class FileAdd {
+  constructor(params) {
+    this.root = params.root;
+    this.options = params.options;
+  }
+
+  init() {
+    this.events();
+  }
+
+  events() {
+    this.onClick();
+  }
+
+  onClick() {
+    $('.filebar .add-file').addEventListener('click', (e) => {
+      this.add();
+    });
+  }
+
+  add() {
+    let pending = typeof document.body.dataset.pending !== 'undefined' ? true : false;
+    if(pending) {
+      if(!confirm('Add: The current file has not been saved. Load anyway?')) {
+        if(buffer_id === '') return;
+
+        action = 'file/add/abort';
+
+        staircase.removeActive();
+        staircase.select(buffer_id);
+        return;
+      }
+    }
+    message.open('loading', {autohide: false});
+    $('ms-box').dataset.autohide = '';
+    this.ajax();
+  }
+
+  newId(id, filename) {
+    return (id == '/') ? filename : id + '/' + filename;
+  }
+
+  ajax() {
+    let path = this.root + '/api/file/add';
+    let data = {};
+    let folder = $('[data-sc-type="folder"][data-sc-active]');
+    let id = '/';
+
+    if(folder) {
+      id = folder.dataset.scName;
+    } else {
+      let file = $('[data-sc-type="file"][data-sc-active]');
+      if(file) {
+        folder = file.closest('[data-sc-type="folder"]');
+        if(folder) {
+          id = folder.dataset.scName;
+        }
+      }
+    }
+
+    data.id = id;
+
+    fetch(path, {
+      method: 'post',
+      body: JSON.stringify(data),
+    })
+    .then((response) => {
+        return response.text();
+    })
+    .then((text) => {
+      let results = JSON.parse(text);
+      if(!isJson(text)) {
+        message.open(false, text);
+      } else {
+        if(!results.success) {
+          message.open(false, results.message);
+        } else {
+          if(id !== '/') {
+            staircase.open(id);
+          }
+
+          let join = staircase.join(id, results.filename);
+          staircase.add(join, 'file');
+
+          delete $('body').dataset.pending;
+          delete $('ms-box').dataset.open;
+
+          action = 'file/add';
+          buffer_id = join;
+
+          let item = $('[data-sc-name="' + buffer_id + '"] .sc-name');
+          if(item) {
+            item.scrollIntoView({behavior: 'smooth'});
+            staircase.select(join);
+          }
+        }
+      }
+    });
+  }
+}
+class FileDelete {
+  constructor(params) {
+    this.root = params.root;
+    this.options = params.options;
+  }
+
+  delete() {
+    if(!confirm('Delete the current file and the current file revisions?')) return;
+    message.open('loading', {autohide: false});
+    $('ms-box').dataset.autohide = '';
+    this.ajax();
+  }
+
+  ajax() {
+    let path = this.root + '/api/file/delete';
+    let data = {};
+    let selector = $('[data-sc-type="file"][data-sc-active]');
+    if(!selector) return;
+    let id = selector.dataset.scName;
+    data.id = id;
+
+    fetch(path, {
+      method: 'post',
+      body: JSON.stringify(data),
+    })
+    .then((response) => {
+        return response.text();
+    })
+    .then((text) => {
+      if(!isJson(text)) {
+        message.open(false, text);
+      } else {
+        let results = JSON.parse(text);
+        if(!results.success) {
+          message.open(false, results.message);
+        } else {
+          staircase.delete(id);
+          staircase.delete(results.revisions_id);
+          staircase.select(staircase.dirname(id));
+
+          delete $('ms-box').dataset.open;
+          delete $('body').dataset.pending;
+        }
+      }
+    });
+  }
+}
+class Logout {
+  constructor(params) {
+    this.root = params.root;
+    this.options = params.options;
+  }
+
+  init() {
+    this.events();
+  }
+
+  events() {
+    this.onClick();
+  }
+
+  onClick() {
+    $('.filebar .logout').addEventListener('click', (e) => {
+      if(!confirm('Are you sure you want to logout?')) return;
+
+      window.location.href = this.root + '/login/?logout';
+    });
+  }
+}
+class FileRead {
+  constructor(params) {
+    this.render = params.render;
+    this.root = params.root;
+    this.message = params.message;
+    this.options = options;
+  }
+
+  get(id, question = true) {
+    let pending = typeof document.body.dataset.pending !== 'undefined' ? true : false;
+    if(pending) {
+      if(question && !confirm('Read file: The current file has not been saved. Load anyway?')) {
+        if(buffer_id === '') return;
+
+        staircase.select(buffer_id, false);
+        return;
+      }
+    }
+    message.open('loading', {autohide: false});
+    $('ms-box').dataset.autohide = '';
+    this.ajax(id);
+  }
+
+  ajax(id) {
+    let path = this.root + '/api/file/read';
+    let data = {};
+    data.id = id;
+
+    fetch(path, {
+      method: 'post',
+      body: JSON.stringify(data),
+    })
+    .then((response) => {
+        return response.text();
+    })
+    .then((text) => {
+      if(!isJson(text)) {
+        message.open(false, text);
+      } else {
+        let results = JSON.parse(text);
+        if(!results.success) {
+          message.open(false, results.message);
+        } else {
+          buffer_id = id;
+          buffer_type = 'file';
+
+          if(results.type == 'md') {
+            this.toMarkdown(results);
+            editor.refresh();
+          } else if(results.type == 'image') {
+            this.toImage(id, results);
+          }
+
+          if(results.type == 'md' || results.type == 'image') {
+            this.render.updateFilepath(id);
+            this.render.updateFilesize(results.filesize);
+            this.render.updateRevisionsCount(results.revisions_count);
+            this.render.updateCounter();
+
+            delete $('body').dataset.pending;
+            delete $('ms-box').dataset.open;
+          }
+        }
+      }
+    });
+  }
+
+  toMarkdown(results) {
+    latest = results.text;
+    editor.setValue(results.text);
+    this.render.toPreview(this.options['root.url']);
+
+    $('body').dataset.state = 'markdown';
+
+    render.updateCounter();
+  }
+
+  toImage(id, results) {
+    $('body').dataset.state = 'image';
+    $('.image img').setAttribute('src' , results.url);
+
+    render.updateDimensions(results.dimensions);
+  }
+}
+class FileRename {
+  constructor(params) {
+    this.root = params.root;
+    this.options = params.options;
+  }
+
+  rename() {
+    message.open('loading', {autohide: false});
+    this.ajax();
+  }
+
+  ajax() {
+    let path = this.root + '/api/file/rename';
+    let data = {};
+    data.id = $('[data-sc-active]').dataset.scName;
+    data.filename = $('[data-path] input').value;
+
+    message.open('loading', {autohide: false});
+
+    fetch(path, {
+      method: 'post',
+      body: JSON.stringify(data),
+    })
+    .then((response) => {
+        return response.text();
+    })
+    .then((text) => {
+      message.open(false, text);
+
+      let results = JSON.parse(text);
+
+      if(!isJson(text)) {
+        message.open(false, text);
+      } else {
+        if(!results.success) {
+          message.open(false, results.message);
+        } else {
+          staircase.rename(results.old_id, results.new_filename);
+          staircase.rename(results.old_revision, results.new_filename);
+          message.open();
+        }
+      }
+    });
+  }
+}
+class Save {
+  constructor(params) {
+    this.render = params.render;
+    this.root = params.root;
+    this.options = params.options;
+    this.time = this.time();
+  }
+
+  init() {
+    this.events();
+    this.startTimeout();
+  }
+
+  ajax() {
+    let path = this.root + '/api/file/save';
+    let data = {};
+    let id = $('[data-sc-active]').dataset.scName;
+    data.id = id;
+    data.text = editor.getValue();
+
+    fetch(path, {
+      method: 'post',
+      body: JSON.stringify(data),
+    })
+    .then((response) => {
+        return response.text();
+    })
+    .then((text) => {
+      if(!isJson(text)) {
+        message.open(false, text);
+      } else {
+        let results = JSON.parse(text);
+        if(!results.success) {
+          message.open(false, results.message);
+        } else {
+          latest = editor.getValue();
+          this.render.updatePending();
+          this.render.updateTimestamp(results.timestamp);
+          this.render.updateRevisionsCount(results.revisions_count);
+
+          let join = staircase.join(staircase.dirname(id), options['revisions.folder'] + '/' + staircase.basename(id));
+          staircase.refresh(join);
+
+          if(this.options['revisions.hide'] !== true) {
+            let revision_id = staircase.join(staircase.dirname(id), this.options['revisions.folder']);
+            staircase.add(revision_id, 'folder');
+          }
+
+          message.open();
+          this.resetTimeout();
+          this.startTimeout();
+        }
+      }
+    });
+  }
+
+  events() {
+    this.onCtrlS();
+  }
+
+  onCtrlS() {
+    window.addEventListener('keydown', (e) => {
+      if(!e.ctrlKey) return;
+      if(e.code !== 'KeyS') return;
+      e.preventDefault();
+      this.save();
+    });
+  }
+
+  time() {
+    if(!options['autosave']) return false;
+    return options['autosave.interval'] * 1000;
+  }
+
+  startTimeout() {
+    if(!this.time) return;
+    this.clock = setTimeout(() => {
+      this.save();
+    },this.time);
+  }
+
+  resetTimeout() {
+    clearTimeout(this.clock);
+  }
+
+  save() {
+    if(!this.allowed()) {
+      this.startTimeout();
+    } else {
+      message.open('loading', {autohide: false});
+      this.ajax();
+    }
+  }
+
+  allowed() {
+    return typeof document.body.dataset.pending !== 'undefined';
+  }
+}
+class FileUpload {
+  constructor(params) {
+    this.root = params.root;
+    this.options = params.options;
+  }
+
+  init() {
+    this.events();
+  }
+
+  events() {
+    this.onClick();
+    this.onChange();
+  }
+
+  onClick() {
+    $('.filebar .upload-file').addEventListener('click', (e) => {
+      this.upload();
+    });
+  }
+
+  onChange() {
+    $('#upload').addEventListener('change', (e) => {
+      message.open('loading', {autohide: false});
+      $('ms-box').dataset.autohide = '';
+      this.ajax(e.target.files[0]);
+    });
+  }
+
+  upload() {
+    $('#upload').click();
+  }
+
+  ajax(file) {
+    let path = this.root + '/api/file/upload';
+    let data = new FormData();
+
+    let folder = $('[data-sc-type="folder"][data-sc-active]');
+    let id = '/';
+
+    if(folder) {
+      id = folder.dataset.scName;
+    } else {
+      let file = $('[data-sc-type="file"][data-sc-active]');
+      if(file) {
+        folder = file.closest('[data-sc-type="folder"]');
+        if(folder) {
+          id = folder.dataset.scName;
+        }
+      }
+    }
+
+    let match = '';
+    let overwrite = false;
+
+    if(id !== '/') {
+      match = $('[data-sc-type="file"][data-sc-name="' + id + '/' + file.name + '"]');
+    } else {
+      match = $('[data-sc-type="file"][data-sc-name="' + file.name + '"]');
+    }
+
+    if(match) {
+      overwrite = confirm('The file already exists. Overwrite it?');
+      if(!overwrite) return;
+    }
+    
+    data.append('file', file, file.name);
+    data.append('id', id);
+    data.append('overwrite', overwrite);
+
+    let options = {
+      method: 'post',
+      body: data,
+    };
+
+    fetch(path, options)
+    .then((response) => {
+        return response.text();
+    })
+    .then((text) => {
+      if(!isJson(text)) {
+        message.open(false, text);
+      } else {
+        let results = JSON.parse(text);
+        if(!results.success) {
+          message.open(false, results.message);
+        } else {
+          let join = staircase.join(id, file.name);
+          staircase.add(join, 'file');
+          this.resetInput();
+          delete $('ms-box').dataset.open;
+        }
+      }
+    });
+  }
+
+  resetInput() {
+    $('#upload').value = '';
+  }
+}
 class FilefolderDelete {
   constructor(params) {
     this.root = params.root;
@@ -11932,7 +11931,6 @@ class FolderDelete {
     if(!confirm('Delete the current folder?')) return;
     message.open('loading', {autohide: false});
     $('ms-box').dataset.autohide = '';
-    console.log('path');
     this.ajax();
   }
 
@@ -14360,9 +14358,6 @@ class StaircaseCore {
     fetch(this.o.path, this.fetchParams(json))
     .then((response) => { return response.text(); })
     .then((text) => {
-
-      console.log(text);
-
       current.classList.remove('sc-loading');
 
       let args = {};

@@ -20,7 +20,7 @@ function contains($needle, $haystack) {
   return strpos($haystack, $needle) !== false;
 }
 
-function spellcheck() {
+/*function spellcheck() {
   if(option('spellcheck') !== '') {
     $spellcheck_option = option('spellcheck') ? 'true' : 'false';
     $spellcheck = ' spellcheck="' . $spellcheck_option . '"';
@@ -28,7 +28,7 @@ function spellcheck() {
     $spellcheck = '';
   }
   return $spellcheck;
-}
+}*/
 
 function setOptions() {
   include __DIR__ . '/../libraries/tinyoptions.php';

@@ -66,7 +66,7 @@ class FileRead {
   }
 
   toMarkdown(results) {
-    latest = editor.getValue();
+    latest = results.text;
     editor.setValue(results.text);
     this.render.toPreview(this.options['root.url']);
 

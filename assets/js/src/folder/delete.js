@@ -8,7 +8,6 @@ class FolderDelete {
     if(!confirm('Delete the current folder?')) return;
     message.open('loading', {autohide: false});
     $('ms-box').dataset.autohide = '';
-    console.log('path');
     this.ajax();
   }
 

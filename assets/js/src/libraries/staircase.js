@@ -61,9 +61,6 @@ class StaircaseCore {
     fetch(this.o.path, this.fetchParams(json))
     .then((response) => { return response.text(); })
     .then((text) => {
-
-      console.log(text);
-
       current.classList.remove('sc-loading');
 
       let args = {};

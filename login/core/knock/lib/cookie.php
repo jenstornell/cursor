@@ -69,12 +69,13 @@ class Cookie {
     return ($this->ExpireTimeLeft(knocko('cookie_refresh')) < 0) ? $this->refresh($login) : true;
   }
 
+  // Refresh
   public function refresh($login) {
     if(!$login->isLoggedIn()) return;
     $login->loginUser($this->getCookie('cookie_username'));
   }
 
-  // Expire timeleft - MISSING FUNCTION getCookieExpires
+  // Expire timeleft
   private function ExpireTimeLeft($refresh) {
     $minutes = round(((int)$this->getCookie('cookie_expires')-time())/60);
     $diff = $minutes - $refresh;
