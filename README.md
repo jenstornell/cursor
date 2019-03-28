@@ -1,5 +1,7 @@
 # Cursor
 
+![Screenshot](screenshot.png)
+
 ## Options
 
 You need to create `options.php` and place it in the root.
