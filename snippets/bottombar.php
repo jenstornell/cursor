@@ -6,9 +6,9 @@
     </li>
   </ul>
   <ul>
-  <li class="revisions_count state"></li>
-    <li class="dimensions state"></li>
-    <li class="filesize state"></li>
-    <li class="timestamp state"></li>
+    <li class="revisions_count state" title="Revisions"></li>
+    <li class="dimensions state" title="Dimensions"></li>
+    <li class="filesize state" title="Filesize"></li>
+    <li class="timestamp state" title="Saved"></li>
   </ul>
 </div>

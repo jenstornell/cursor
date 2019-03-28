@@ -63,7 +63,7 @@ class Render {
   }
 
   updateTimestamp(timestamp) {
-    $('.timestamp').innerHTML = '<strong>Saved:</strong> ' + timestamp;
+    $('.timestamp').innerHTML = timestamp;
   }
 
   updateDimensions(dimensions) {
@@ -71,11 +71,11 @@ class Render {
   }
 
   updateFilesize(filesize) {
-    $('.filesize').innerHTML = '<strong>Filesize:</strong> ' + filesize;
+    $('.filesize').innerHTML = filesize;
   }
 
   updateRevisionsCount(revisions_count) {
-    $('.revisions_count').innerHTML = '<strong>Revisions:</strong> ' + revisions_count;
+    $('.revisions_count').innerHTML = revisions_count;
   }
 
   toPreview(root) {

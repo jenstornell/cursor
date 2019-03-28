@@ -12,9 +12,21 @@
   .bottombar ul {
     list-style: none;
     display: flex;
-    margin: 0 -.5rem; }
+    margin: 0 -1rem; }
     .bottombar ul li {
-      padding: 0 .5rem; }
+      padding: 0 1rem;
+      padding-left: calc(18px + 1rem);
+      background-size: 18px;
+      background-repeat: no-repeat;
+      background-position: .5rem center;
+      color: #333;
+      cursor: default; }
+      .bottombar ul li.timestamp {
+        background-image: url("../../images/remixicon/time-line.svg"); }
+      .bottombar ul li.filesize {
+        background-image: url("../../images/remixicon/file-info-line.svg"); }
+      .bottombar ul li.revisions_count {
+        background-image: url("../../images/remixicon/stack-line.svg"); }
 
 .browser {
   background: #fafafa;

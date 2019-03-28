@@ -2,7 +2,6 @@ aside {
   background: #eee;
   width: 300px;
   border-right: 1px solid #ccc;
-  //overflow-y: auto;
   display: flex;
   flex-direction: column;
   border-top-left-radius: .5rem;
@@ -11,7 +10,6 @@ aside {
   .filebar {
     background: #ddd;
     display: flex;
-    //justify-content: flex-end;
     min-height: 2.5rem;
     border-bottom: 1px solid #ccc;
     padding: 0 .5rem;
