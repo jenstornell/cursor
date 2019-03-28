@@ -1,5 +1,7 @@
 # Cursor
 
+A PHP markdown editor with live split screen preview. Drop on your domain/server and you can start edit the files right away.
+
 ![Screenshot](screenshot.png)
 
 ## Options
