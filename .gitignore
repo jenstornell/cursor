@@ -2,6 +2,7 @@ node_modules
 temp
 users
 test
+options.php
 options-live.php
 options-test.php
 options-jiddra.php
