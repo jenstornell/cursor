@@ -46,11 +46,19 @@ class FolderRead {
           render.updateFilepath(id);
           buffer_id = id;
           buffer_type = 'folder';
+
+          if(action == 'folder/add') {
+            let input = document.querySelector('[data-path] input');
+            input.focus();
+            input.select();
+          }
+
           delete $('body').dataset.pending;
           delete $('ms-box').dataset.open;
           this.onClick();
         }
       }
+      action = '';
     });
   }
 

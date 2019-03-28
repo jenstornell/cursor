@@ -34,17 +34,28 @@ walloption::set($options);
 
 $knock = new Knock(walloption());
 
-if(isset($_GET['login'])) {
-  if($knock->login()) {
-    header(sprintf('Location: %s', walloption('redirect.url')));
-    die;
-  } else {
-    header(sprintf('Location: %s', wall::url('?error')));
-    die;
-  }
-} elseif(isset($_GET['logout'])) {
+if(isset($_GET['logout'])) {
   $knock->logout();
   header(sprintf('Location: %s', wall::url()));
+} elseif(isset($_GET['login'])) {
+  $results = $knock->login();
+
+  #echo 'ok'; die;
+
+  if($results['success']) {
+    header(sprintf('Location: %s', walloption('redirect.url')));
+  } else {
+    header(sprintf('Location: %s', wall::url('?error')));
+  }
+  die;
 } else {
+  include __DIR__ . '/core/templates/form.php';  
+}/* else {
   include __DIR__ . '/core/templates/form.php';
-}
+}*/
+
+
+  /*} else {
+    header(sprintf('Location: %s', wall::url('?error')));
+    die;
+  }*/

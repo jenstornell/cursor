@@ -57,6 +57,7 @@ class FileRead {
       'text' => $this->content,
       'type' => 'md',
       'filesize' => humanFilesize(filesize($this->filepath)),
+      'timestamp' => date('H:i:s', filemtime($this->filepath)),
       'revisions_count' => $revisions_count,
     ];
     $this->output(true);

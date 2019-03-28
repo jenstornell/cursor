@@ -56,11 +56,22 @@ class FileRead {
             this.render.updateFilesize(results.filesize);
             this.render.updateRevisionsCount(results.revisions_count);
             this.render.updateCounter();
+            this.render.updateTimestamp(results.timestamp);
+
+            if(action == 'file/add') {
+              let input = document.querySelector('[data-path] input');
+              input.focus();
+              input.select();
+            } else {
+              editor.focus();
+            }
 
             delete $('body').dataset.pending;
             delete $('ms-box').dataset.open;
           }
         }
+
+        action = '';
       }
     });
   }

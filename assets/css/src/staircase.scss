@@ -109,8 +109,25 @@ stair-case {
           }
           &[data-sc-type="file"] {
             .sc-icon {
-              background-image: url('../../images/remixicon/18/file-text.svg');
+              background-image: url('../../images/remixicon/18/file.svg');
             }
+
+            &[data-sc-name$=".markdown"],
+            &[data-sc-name$=".mdown"],
+            &[data-sc-name$=".mkdn"],
+            &[data-sc-name$=".md"],
+            &[data-sc-name$=".mkd"],
+            &[data-sc-name$=".mdwn"],
+            &[data-sc-name$=".mdtxt"],
+            &[data-sc-name$=".mdtext"],
+            &[data-sc-name$=".text"],
+            &[data-sc-name$=".rmd"],
+            &[data-sc-name$=".txt"] {
+              .sc-icon {
+                background-image: url('../../images/remixicon/18/file-text.svg');
+              }
+            }
+
             &[data-sc-name$=".gif"],
             &[data-sc-name$=".jpg"],
             &[data-sc-name$=".jpeg"],

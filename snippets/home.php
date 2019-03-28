@@ -134,7 +134,6 @@ $json = json_encode(option());
     select(args) {
       if(args.type == 'file') {
         if(action === 'file/add') {
-          action = '';
           fileread.get(args.id, false);
         } else if(action == 'file/add/abort') {
           fileread.get(args.id, false);
@@ -143,7 +142,6 @@ $json = json_encode(option());
         }
       } else if(args.type == 'folder') {
         if(action === 'folder/add') {
-          action = '';
           folderread.get(args.id, false);
         } else {
           folderread.get(args.id);
@@ -164,6 +162,7 @@ $json = json_encode(option());
 <script>
   var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
     mode: 'markdown',
+    viewportMargin: Infinity,
     lineNumbers: false,
     lineWrapping: true,
     theme: "default",

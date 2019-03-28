@@ -65,7 +65,7 @@
 
 .CodeMirror {
   width: 100%;
-  height: 100%;
+  height: 100% !important;
   font-family: roboto !important;
   line-height: 1.5;
   color: #333 !important; }
@@ -119,8 +119,7 @@
   height: 300px;
   color: black;
   direction: ltr;
-  width: 100%;
-  height: 100%; }
+  width: 100%; }
 
 /* PADDING */
 .CodeMirror-lines {
@@ -885,6 +884,8 @@ stair-case {
         stair-case ul li[data-sc-type="folder"].sc-loading > .sc-current > .sc-icon:hover {
           background-color: transparent; }
       stair-case ul li[data-sc-type="file"] .sc-icon {
+        background-image: url("../../images/remixicon/18/file.svg"); }
+      stair-case ul li[data-sc-type="file"][data-sc-name$=".markdown"] .sc-icon, stair-case ul li[data-sc-type="file"][data-sc-name$=".mdown"] .sc-icon, stair-case ul li[data-sc-type="file"][data-sc-name$=".mkdn"] .sc-icon, stair-case ul li[data-sc-type="file"][data-sc-name$=".md"] .sc-icon, stair-case ul li[data-sc-type="file"][data-sc-name$=".mkd"] .sc-icon, stair-case ul li[data-sc-type="file"][data-sc-name$=".mdwn"] .sc-icon, stair-case ul li[data-sc-type="file"][data-sc-name$=".mdtxt"] .sc-icon, stair-case ul li[data-sc-type="file"][data-sc-name$=".mdtext"] .sc-icon, stair-case ul li[data-sc-type="file"][data-sc-name$=".text"] .sc-icon, stair-case ul li[data-sc-type="file"][data-sc-name$=".rmd"] .sc-icon, stair-case ul li[data-sc-type="file"][data-sc-name$=".txt"] .sc-icon {
         background-image: url("../../images/remixicon/18/file-text.svg"); }
       stair-case ul li[data-sc-type="file"][data-sc-name$=".gif"] .sc-icon, stair-case ul li[data-sc-type="file"][data-sc-name$=".jpg"] .sc-icon, stair-case ul li[data-sc-type="file"][data-sc-name$=".jpeg"] .sc-icon, stair-case ul li[data-sc-type="file"][data-sc-name$=".png"] .sc-icon, stair-case ul li[data-sc-type="file"][data-sc-name$=".svg"] .sc-icon, stair-case ul li[data-sc-type="file"][data-sc-name$=".webp"] .sc-icon {
         background-image: url("../../images/remixicon/18/image-line.svg"); }

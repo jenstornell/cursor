@@ -47,13 +47,14 @@ return [
 ## Libries used
 
 - [Codemirror](https://github.com/codemirror/CodeMirror) - Brings syntax hightlighting to the textarea.
+- [Knock](https://github.com/jenstornell/knock) - The authorization library for logging in.
 - [Remixicon](https://remixicon.com/) - A special thanks to [xiaochunjimmy](https://github.com/xiaochunjimmy) for not only providing a beautiful icon pack with 24px icons, but also for making custom designed 18px icons for this project.
 - [staircase.js](https://github.com/jenstornell/staircase.js) - Used for the filetree in the sidebar.
-- [Countable](https://github.com/RadLikeWhoa/Countable) - Counter for words and characters.
 - [Marked](https://github.com/markedjs/marked) - The markdown parser that transforms markdown to html.
 - [Message](https://github.com/jenstornell/message.js) - A library to trigger messages from ajax.
 - [TinyOptions](https://github.com/jenstornell/TinyOptions) - A library to make PHP options much simpler.
 - [TinyRoutes](https://github.com/jenstornell/TinyRouter) - A router to make better urls.
+- [Wall](https://github.com/jenstornell/wall) - The login screen.
 
 ## Revisions
 

@@ -12,6 +12,7 @@ class Render {
 
   events() {
     this.onKeyUp();
+    this.onClickWrapper();
   }
 
   onKeyUp() {
@@ -19,6 +20,14 @@ class Render {
       this.toPreview(this.options['root.url']);
       this.updateCounter();
       this.updatePending();
+    });
+  }
+
+  onClickWrapper() {
+    console.log('test');
+    $('.editor').addEventListener('click', (e) => {
+      if(e.target !== e.currentTarget) return
+      editor.focus();
     });
   }
 
@@ -73,8 +82,17 @@ class Render {
     let folder = (buffer_id !== '') ? staircase.dirname(buffer_id) : '/';
     let value = editor.getValue();
     let base = staircase.join(root + '/api/image', folder) + '/';
+
+    const renderer = new marked.Renderer();
+    const linkRenderer = renderer.link;
+    renderer.link = (href, title, text) => {
+      const html = linkRenderer.call(renderer, href, title, text);
+      return html.replace(/^<a /, '<a target="_blank" rel="nofollow" ');
+    };
+
     let markdown = marked(value, {
-      baseUrl: base
+      baseUrl: base,
+      renderer: renderer,
     });
     $('.preview').innerHTML = markdown;
   }
