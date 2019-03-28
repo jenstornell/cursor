@@ -4,6 +4,10 @@ A PHP markdown editor with live split screen preview. Drop on your domain/server
 
 ![Screenshot](screenshot.png)
 
+## Users
+
+See https://github.com/jenstornell/knock#create-a-user
+
 ## Options
 
 You need to create `options.php` and place it in the root.
